@@ -1,0 +1,123 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{pdflscape}
+\usepackage{longtable}
+
+\geometry{a4paper, margin=1.5cm}
+
+\title{Resultados dos Problemas NETLIB - Solver HiGHS}
+\author{Análise Computacional}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Informações dos Problemas}
+
+Esta tabela apresenta informações básicas sobre cada problema da coleção NETLIB, incluindo métricas de viabilidade.
+
+\scriptsize
+\begin{longtable}{@{}l|cccc@{}}
+\caption{Informações dos problemas NETLIB} \label{tab:info_problemas} \\
+\toprule
+\textbf{Problema} & \textbf{Nº de Variáveis} & \textbf{Nº de Restrições} & \textbf{Inviab. Primal} & \textbf{Inviab. Dual} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Problema} & \textbf{Nº de Variáveis} & \textbf{Nº de Restrições} & \textbf{Inviab. Primal} & \textbf{Inviab. Dual} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{5}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+25fv47 & 1571 & 821 & 0.000e+00 & 1.332e-15 \\
+80bau3b & 9799 & 2262 & 0.000e+00 & 1.377e-14 \\
+
+\bottomrule
+\end{longtable}
+
+\section{Resultados de Convergência}
+
+Esta tabela apresenta os resultados de convergência para cada problema, incluindo o número de iterações, valor da função objetivo e o gap relativo.
+
+\scriptsize
+\begin{longtable}{@{}l|cccccc@{}}
+\caption{Resultados de convergência dos problemas NETLIB} \label{tab:resultados_convergencia} \\
+\toprule
+\textbf{Problema} & \textbf{Iterações} & \textbf{Valor Ótimo} & \textbf{Valor Ótimo Primal} & \textbf{Valor Ótimo Dual} & \textbf{Gap Absoluto} & \textbf{Gap Relativo} \\
+\midrule
+\endfirsthead
+
+
+\multicolumn{7}{c}%
+{{\bfseries \tablename\ \thetable{} -- continuação da página anterior}} \\
+\toprule
+\textbf{Problema} & \textbf{Iterações} & \textbf{Valor Ótimo} & \textbf{Valor Ótimo Primal} & \textbf{Valor Ótimo Dual} & \textbf{Gap Absoluto} & \textbf{Gap Relativo} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{7}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+25fv47 & 28 & 5.502e+03 & 5.502e+03 & 5.502e+03 & 4.132e-16 & 7.511e-20 \\
+80bau3b & 43 & 9.872e+05 & 9.872e+05 & 1.130e+06 & 2.948e-16 & 2.986e-22 \\
+
+\bottomrule
+\end{longtable}
+
+\section{Soluções das Variáveis (Primeiras 5)}
+
+Esta tabela apresenta as primeiras 5 variáveis da solução encontrada para cada problema. Para problemas com menos de 5 variáveis, apenas as variáveis disponíveis são mostradas.
+
+\scriptsize % ou \footnotesize, escolha conforme achar melhor
+\begin{longtable}{|l|ccccc|}
+\caption{Primeiras 5 variáveis das soluções encontradas\label{tab:solucoes_variaveis}} \\
+\hline
+\textbf{Problema} & \textbf{x1} & \textbf{x2} & \textbf{x3} & \textbf{x4} & \textbf{x5} \\
+\hline
+\endfirsthead
+
+\hline
+\textbf{Problema} & \textbf{x1} & \textbf{x2} & \textbf{x3} & \textbf{x4} & \textbf{x5} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{6}{r}{{Continua na próxima página}} \\
+\endfoot
+
+\hline
+\endlastfoot
+25fv47 & 53.139 & 0.000 & 0.000 & 34.226 & 0.000 \\
+80bau3b & 531.125 & 286.801 & 544.742 & 895.539 & 1810.744 \\
+
+
+\hline
+\end{longtable}
+
+\section{Observações}
+
+\begin{itemize}
+\item O solver HiGHS foi configurado com o método IPM (Interior Point Method).
+\item Problemas com status "Optimal" convergiram com sucesso.
+\item A primeira tabela mostra informações básicas dos problemas e métricas de viabilidade.
+\item A segunda tabela apresenta métricas de convergência e qualidade da solução.
+\item A terceira tabela mostra valores simulados das primeiras 5 variáveis (para demonstração).
+\item A terceira tabela é apresentada em formato paisagem para melhor visualização.
+\end{itemize}
+
+\end{document}

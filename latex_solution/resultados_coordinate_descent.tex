@@ -1,0 +1,154 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{pdflscape}
+
+\geometry{a4paper, margin=2cm}
+
+\title{Resultados dos Problemas de Otimização - Método da Descida por Coordenadas}
+\author{Análise Computacional}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Problemas de Otimização}
+
+Esta tabela apresenta os problemas de otimização não-linear resolvidos usando o método da Descida por Coordenadas e o número de variáveis de cada problema.
+
+\begin{table}[h!]
+\centering
+\caption{Problemas de otimização e número de variáveis}
+\label{tab:problemas_variáveis}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Problema} & \textbf{Número de Variáveis} \\
+\midrule
+ROSENBROCK & 10 \\
+PENALTY & 5 \\
+TRIGONOMETRIC & 10 \\
+EXTENDED ROSENBROCK & 10 \\
+EXTENDED POWELL & 12 \\
+QOR & 50 \\
+GOR & 50 \\
+PSP & 50 \\
+TRIDIAGONAL & 10 \\
+ENGGVAL1 & 10 \\
+LINEAR MINIMUM SURFACE & 9 \\
+SQUARE ROOT 1 & 16 \\
+SQUARE ROOT 2 & 16 \\
+FREUDENTHAL ROTH & 10 \\
+SPARSE MATRIX SQRT & 10 \\
+ULTS0 & 64 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Resultados de Convergência}
+
+Esta tabela apresenta os resultados de convergência para cada problema, incluindo o número de iterações necessárias, o valor mínimo da função objetivo encontrado e a precisão da solução (norma do gradiente).
+
+\begin{table}[h!]
+\centering
+\caption{Resultados de convergência dos problemas de otimização}
+\label{tab:resultados_convergencia}
+\begin{tabular}{|l|cccc|}
+\hline
+\textbf{Problema} & \textbf{Iterações} & \textbf{Valor Mínimo} & \textbf{Precisão ($||\nabla f(x^*)||$)} & \textbf{Tempo (s)} \\
+\hline
+ROSENBROCK & 1 & 0.000000e+00 & 3.999688e-10 & 0.000s \\
+\hline
+PENALTY & 3 & 9.147106e-02 & 8.413248e-10 & 0.017s \\
+\hline
+TRIGONOMETRIC & 64 & 4.218634e-05 & 5.394831e-07 & 0.214s \\
+\hline
+EXTENDED ROSENBROCK & 0 & 0.000000e+00 & 8.943575e-10 & 0.000s \\
+\hline
+EXTENDED POWELL & 999 & 4.570395e-07 & 7.860834e-05 & 2.100s \\
+\hline
+QOR & 46 & 1.175472e+03 & 5.356569e-06 & 3.846s \\
+\hline
+GOR & 342 & 1.381118e+03 & 1.831276e-05 & 31.875s \\
+\hline
+PSP & 293 & 2.020485e+02 & 4.221645e-05 & 17.742s \\
+\hline
+TRIDIAGONAL & 36 & 1.452112e-12 & 1.968393e-06 & 0.040s \\
+\hline
+ENGGVAL1 & 12 & 9.177470e+00 & 9.951075e-07 & 0.031s \\
+\hline
+LINEAR MINIMUM SURFACE & 3 & 1.000000e+00 & 2.220446e-09 & 0.006s \\
+\hline
+SQUARE ROOT 1 & 236 & 5.734431e-11 & 7.268811e-06 & 0.680s \\
+\hline
+SQUARE ROOT 2 & 999 & 9.984211e-04 & 9.520171e-04 & 3.165s \\
+\hline
+FREUDENTHAL ROTH & 62 & 1.014064e+03 & 3.499695e-05 & 0.186s \\
+\hline
+SPARSE MATRIX SQRT & 65 & 2.512124e-01 & 1.108387e-06 & 0.316s \\
+\hline
+ULTS0 & 999 & 7.589275e-03 & 2.054497e-01 & 109.267s \\
+\hline
+\hline
+\end{tabular}
+\end{table}
+
+\section{Soluções Encontradas (Primeiras 5 Variáveis)}
+
+Esta tabela apresenta as primeiras 5 variáveis da solução encontrada para cada problema. Para problemas com menos de 5 variáveis, apenas as variáveis disponíveis são mostradas.
+
+\begin{landscape}
+\begin{table}[h!]
+\centering
+\caption{Primeiras 5 variáveis das soluções encontradas}
+\label{tab:solucoes_variáveis}
+\begin{tabular}{|l|ccccc|}
+\hline
+\textbf{Problema} & \textbf{x₁} & \textbf{x₂} & \textbf{x₃} & \textbf{x₄} & \textbf{x₅} \\
+\hline
+ROSENBROCK & 1.000000e+00 & 1.000000e+00 & 0.000000e+00 & 0.000000e+00 & 0.000000e+00 \\
+\hline
+PENALTY & 9.815760e-01 & 9.815760e-01 & 9.815760e-01 & 9.815760e-01 & 9.815760e-01 \\
+\hline
+TRIGONOMETRIC & 5.391346e-02 & 5.549715e-02 & 5.728647e-02 & 5.933727e-02 & 6.173081e-02 \\
+\hline
+EXTENDED ROSENBROCK & 1.000000e+00 & 1.000000e+00 & 1.000000e+00 & 1.000000e+00 & 1.000000e+00 \\
+\hline
+EXTENDED POWELL & 1.551461e-02 & -1.551323e-03 & 8.742480e-03 & 8.743722e-03 & 1.551461e-02 \\
+\hline
+QOR & 5.923351e-01 & -7.111490e-01 & 6.286106e-02 & -2.651204e+00 & 1.583513e+00 \\
+\hline
+GOR & -1.798017e+00 & -3.441810e-01 & -3.039579e+00 & -1.059181e-01 & 7.362649e+00 \\
+\hline
+PSP & 4.999680e+00 & 4.943251e+00 & 5.002957e+00 & 2.903055e+00 & 4.995767e+00 \\
+\hline
+TRIDIAGONAL & 1.000001e+00 & 5.000007e-01 & 2.500005e-01 & 1.250003e-01 & 6.250021e-02 \\
+\hline
+ENGGVAL1 & 9.010300e-01 & 5.458807e-01 & 6.512110e-01 & 6.240700e-01 & 6.319669e-01 \\
+\hline
+LINEAR MINIMUM SURFACE & 3.123433e+00 & 4.328209e+00 & 3.123433e+00 & 4.328209e+00 & 3.123433e+00 \\
+\hline
+SQUARE ROOT 1 & 7.749120e-01 & -5.116510e-01 & -6.544902e-01 & -2.698334e-01 & -4.149487e-01 \\
+\hline
+SQUARE ROOT 2 & 9.060716e-01 & 2.969159e-01 & 2.524937e-01 & -2.378508e-01 & -2.227805e-01 \\
+\hline
+FREUDENTHAL ROTH & 1.226913e+01 & -8.318617e-01 & -1.506923e+00 & -1.534671e+00 & -1.535798e+00 \\
+\hline
+SPARSE MATRIX SQRT & -5.309442e-01 & 7.083652e-01 & 1.447271e-01 & 2.497762e-03 & 1.399359e-02 \\
+\hline
+ULTS0 & 1.781476e-02 & -2.549321e-02 & -5.020470e-02 & -7.421915e-02 & -8.752060e-02 \\
+\hline
+\hline
+\end{tabular}
+\end{table}
+\end{landscape}
+
+
+
+\end{document}
