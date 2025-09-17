@@ -1,0 +1,43 @@
+
+PRIMAL
+Min c^T x
+s.a. Ax = b
+     x ≥ 0
+
+
+DUAL
+Max b^T y
+s.a. A^T y + z = c
+     z ≥ 0
+
+
+Onde:
+x: variáveis primais (variáveis de decisão do problema original)
+y: variáveis duais (multiplicadores de Lagrange das restrições)
+z: variáveis de folga duais (custos reduzidos)
+
+
+Naverdade será gerado 1 tabela para cada problema.
+
+Problema 1:
+Nome
+Num_var
+Num_rest
+NUm_variaveis_primais
+Num_variaveis_duais
+Inv Primal
+Inv Dual
+Valor Primal
+Valor Dual
+Gap
+Numero de Iterações
+
+
+|coordenada x|valor x|coordenada y |valor y|
+	1     0.2313       1         0
+....
+....
+....
+
+
+|coordenada y|valor y|

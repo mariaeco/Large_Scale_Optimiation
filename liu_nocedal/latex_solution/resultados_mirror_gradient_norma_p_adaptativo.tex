@@ -1,0 +1,139 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{pdflscape}
+
+\geometry{a4paper, margin=2cm}
+
+\title{Resultados dos Problemas de Otimização - Método Gradiente Espelhado Otimizado (Norma-p (adaptativo))}
+\author{Análise Computacional}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Problemas de Otimização}
+
+A tabela 1 apresenta os problemas de otimização não-linear resolvidos usando o método Gradiente Espelhado Otimizado (Norma-p (adaptativo)) e o número de variáveis de cada problema.
+
+\begin{table}[h!]
+\centering
+\caption{Problemas de otimização e número de variáveis}
+\label{tab:problemas_variáveis}
+\begin{tabular}{@{}|lc|@{}}
+\toprule
+\textbf{Problema} & \textbf{Número de Variáveis} \\
+\midrule
+ROSENBROCK & 100 \\
+PENALTY & 100 \\
+TRIGONOMETRIC & 100 \\
+EXTENDED ROSENBROCK & 100 \\
+EXTENDED POWELL & 100 \\
+QOR & 50 \\
+GOR & 50 \\
+PSP & 50 \\
+TRIDIAGONAL & 100 \\
+ENGGVAL1 & 100 \\
+LINEAR MINIMUM SURFACE & 36 \\
+SQUARE ROOT 1 & 36 \\
+SQUARE ROOT 2 & 36 \\
+FREUDENTHAL ROTH & 100 \\
+SPARSE MATRIX SQRT & 16 \\
+ULTS0 & 64 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Resultados de Convergência}
+
+A tabela 2 apresenta os resultados de convergência para cada problema, incluindo o número de iterações necessárias, o valor mínimo da função objetivo encontrado e a precisão da solução (norma do gradiente).
+
+
+\begin{table}[h!]
+\small
+\centering
+\caption{Resultados de convergência dos problemas de otimização}
+\label{tab:resultados_convergencia}
+\small
+\begin{tabular}{|l|cccc|}
+\hline
+\textbf{Problema} & \textbf{Iterações} & \textbf{Valor Mínimo} & \textbf{Precisão ($||\nabla f(x^*)||$)} & \textbf{Tempo (s)}\\
+\hline
+ROSENBROCK & 1 & 9.604e-01 & 1.958e+00 & 0.000s \\
+PENALTY & 1 & 9.604e+01 & 1.960e+01 & 0.013s \\
+TRIGONOMETRIC & 1 & 9.428e-05 & 1.904e-02 & 0.000s \\
+EXTENDED ROSENBROCK & 1 & 4.802e+01 & 1.385e+01 & 0.008s \\
+EXTENDED POWELL & 1 & 0.000e+00 & 0.000e+00 & 0.009s \\
+QOR & 1 & 1.963e+03 & 1.556e+02 & 0.007s \\
+GOR & 1 & 3.023e+03 & 2.036e+02 & 0.009s \\
+PSP & 1 & 1.712e+03 & 1.046e+02 & 0.007s \\
+TRIDIAGONAL & 1 & 9.493e+01 & 1.984e+01 & 0.002s \\
+ENGGVAL1 & 1 & 2.812e+02 & 3.979e+01 & 0.012s \\
+LINEAR MINIMUM SURFACE & 1 & 2.137e+01 & 1.107e+00 & 0.003s \\
+SQUARE ROOT 1 & 1 & 2.868e+01 & 7.207e+00 & 0.001s \\
+SQUARE ROOT 2 & 1 & 2.845e+01 & 7.448e+00 & 0.001s \\
+FREUDENTHAL ROTH & 13 & 6.225e+04 & 1.790e+04 & 0.427s \\
+SPARSE MATRIX SQRT & 1 & 1.374e+01 & 4.395e+00 & 0.000s \\
+ULTS0 & 82 & 5.941e+04 & 2.066e+06 & 0.966s \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\section{Soluções Encontradas (Primeiras 5 Variáveis)}
+
+A tabela 3 apresenta as primeiras 5 variáveis da solução encontrada para cada problema. Para problemas com menos de 5 variáveis, apenas as variáveis disponíveis são mostradas.
+
+\begin{landscape}
+\begin{table}[h!]
+\centering
+\caption{Primeiras 5 variáveis das soluções encontradas}
+\label{tab:solucoes_variáveis}
+\begin{tabular}{|l|ccccc|}
+\hline
+\textbf{Problema} & \textbf{x1} & \textbf{x2} & \textbf{x3} & \textbf{x4} & \textbf{x5} \\
+\hline
+ROSENBROCK & 2.000000e-02 & 0.000000e+00 & 0.000000e+00 & 0.000000e+00 & 0.000000e+00 \\
+PENALTY & 2.000000e-02 & 2.000000e-02 & 2.000000e-02 & 2.000000e-02 & 2.000000e-02 \\
+TRIGONOMETRIC & 9.805973e-03 & --- & --- & --- & --- \\
+EXTENDED ROSENBROCK & 2.000000e-02 & 0.000000e+00 & 2.000000e-02 & 0.000000e+00 & 2.000000e-02 \\
+EXTENDED POWELL & 0.000000e+00 & 0.000000e+00 & 0.000000e+00 & 0.000000e+00 & 0.000000e+00 \\
+QOR & 5.000000e-02 & -5.000000e-02 & 3.900000e-01 & -9.500000e-02 & 4.400000e-01 \\
+GOR & -1.104213e-01 & 1.155132e+00 & -2.127931e-01 & 1.265553e+00 & 4.193572e-01 \\
+PSP & 1.252000e-01 & 1.402296e-01 & 2.402400e-01 & 1.400296e-01 & 1.747433e-01 \\
+TRIDIAGONAL & 1.020000e+00 & 9.800000e-01 & 9.800000e-01 & 9.800000e-01 & 9.800000e-01 \\
+ENGGVAL1 & 4.000000e-02 & 4.000000e-02 & 4.000000e-02 & 4.000000e-02 & 4.000000e-02 \\
+LINEAR MINIMUM SURFACE & 9.989217e-01 & 2.598394e+00 & 4.197971e+00 & 5.797983e+00 & 7.399252e+00 \\
+SQUARE ROOT 1 & 1.863720e-01 & -1.658399e-01 & 7.007494e-02 & -4.671494e-02 & -3.585987e-02 \\
+SQUARE ROOT 2 & 1.862514e-01 & -1.711598e-01 & 6.661757e-02 & -4.463637e-02 & -3.491873e-02 \\
+FREUDENTHAL ROTH & 2.372408e-01 & -2.202950e+00 & -2.202950e+00 & -2.202950e+00 & -2.202950e+00 \\
+SPARSE MATRIX SQRT & 1.724330e-01 & -1.518297e-01 & 8.359796e-02 & -6.055943e-02 & -2.936013e-02 \\
+ULTS0 & 4.054365e-02 & 5.338975e-02 & -1.174733e-01 & 4.611805e-02 & -2.899394e-02 \\
+\hline
+\hline
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\section{Observações}
+
+\begin{itemize}
+\item O método L-BFGS-B foi configurado com tolerância de convergência de $10^{-6}$.
+\item Para problemas que falharam, verifique a mensagem de erro específica.
+\item A precisão é medida pela norma do gradiente ($||\nabla f(x^*)||$) calculada numericamente.
+\item Valores de precisão menores indicam soluções mais próximas de pontos estacionários.
+\item Para problemas irrestritos, $||\nabla f(x^*)|| \approx 0$ indica convergência para um mínimo local.
+\item Problemas que falharam são marcados com "---" nas colunas de resultados.
+\item A terceira tabela mostra as primeiras 5 variáveis da solução encontrada.
+\item Para problemas com menos de 5 variáveis, as colunas extras são marcadas como "---".
+\item A terceira tabela é apresentada em formato paisagem para melhor visualização.
+\end{itemize}
+
+\end{document}
