@@ -38,13 +38,8 @@ Este projeto implementa e compara diferentes métodos de otimização para probl
 - **Função**: Implementa o algoritmo de Coordinate Descent
 - **Problemas**: Coleção de Liu e Nocedal
 - **Características**: Otimização coordenada por coordenada
-- **Saída**: Resultados em formato LaTeX
+- **Saída**: Resultados em formato LaTeX 
 
-#### `highs_solver_liu_nocedal.py`
-- **Função**: Resolve problemas de Liu e Nocedal usando o solver HiGHS
-- **Método**: Interior Point Method
-- **Problemas**: Coleção de Liu e Nocedal
-- **Saída**: Resultados em formato LaTeX
 
 ### 🧪 **Arquivos de Teste**
 
@@ -74,25 +69,6 @@ Este projeto implementa e compara diferentes métodos de otimização para probl
 - **`individual_problems_pdf/`**: PDFs gerados dos arquivos individuais
 - **`resultados_*.tex`**: Resultados específicos de cada método
 
-### `RELATORIOS/`
-- Relatórios em PDF com análises detalhadas de cada método
-
-## 🚀 **Como Usar**
-
-### 1. **Resolver problemas NETLIB:**
-```bash
-python ipm_solver_netlib.py
-```
-
-### 2. **Comparar métodos de otimização:**
-```bash
-python comparison_solver.py
-```
-
-### 3. **Testar comparador:**
-```bash
-python test_comparison.py
-```
 
 ### 4. **Converter LaTeX para PDF:**
 ```bash
@@ -107,13 +83,6 @@ python netlib_latex_to_pdf.py
 - `pandas`: Manipulação de dados
 - `pdflatex`: Conversão LaTeX para PDF (biblioteca Python)
 
-## 🎯 **Objetivos**
-
-1. **Implementar** diferentes métodos de otimização
-2. **Comparar** performance em problemas de larga escala
-3. **Gerar** relatórios automatizados em LaTeX
-4. **Extrair** variáveis primais e duais das soluções
-5. **Documentar** resultados de forma sistemática
 
 ## 📈 **Métodos Implementados**
 
@@ -125,4 +94,4 @@ python netlib_latex_to_pdf.py
 ## 🔍 **Coleções de Problemas**
 
 - **NETLIB**: 82 problemas de programação linear
-- **Liu e Nocedal**: Problemas de otimização não-linear
+- **Liu e Nocedal**: 16 Problemas de otimização não-linear
