@@ -1,97 +1,86 @@
-# Projeto de Otimização em Larga Escala
+# Large Scale Optimization
 
-Este projeto implementa e compara diferentes métodos de otimização para problemas de larga escala, incluindo problemas da coleção NETLIB e problemas de Liu e Nocedal.
+Este repositório implementa e compara diferentes métodos de otimização para problemas de larga escala, incluindo problemas da coleção NETLIB e problemas de Liu e Nocedal. O projeto foca em métodos eficientes para otimização não-linear e programação linear.
 
 ## 📁 Estrutura do Projeto
 
 ### 🔧 **Arquivos Principais**
 
-#### `ipm_solver_netlib.py`
+#### `netlib_ipm_solver/netlib_ipm_solver.py`
 - **Função**: Resolve problemas da coleção NETLIB usando o solver HiGHS
 - **Método**: Interior Point Method (IPM)
-- **Entrada**: Arquivos .mps da coleção NETLIB
+- **Entrada**: Arquivos .mps da coleção NETLIB (82 problemas)
 - **Saída**: 
-  - Arquivo principal com tabelas gerais (`resultados_netlib.tex`)
-  - Arquivos individuais para cada problema (`individual_problems/*.tex`)
+  - Arquivo principal com tabelas gerais (`resultados_netlib.tex` e `pdf`)
+  - Arquivos individuais para cada problema (`individual_problems/*.tex` e `pdf`)
   - Extração de variáveis primais e duais
-- **Uso**: `python ipm_solver_netlib.py`
+- **Uso**: `python netlib_ipm_solver.py`
 
-#### `comparison_solver.py`
-- **Função**: Compara três métodos de otimização nos problemas de Liu e Nocedal
-- **Métodos comparados**: L-BFGS-B, Mirror Gradient, Coordinate Descent
-- **Saída**: Tabelas comparativas em LaTeX
-- **Uso**: `python comparison_solver.py`
-
-#### `lbfgsb_solver_liu_nocedal.py`
+#### `liu_nocedal/lbfgsb_solver.py`
 - **Função**: Implementa o método L-BFGS-B (Limited-memory BFGS with Bounds)
-- **Problemas**: Coleção de Liu e Nocedal
+- **Problemas**: Coleção de 16 problemas reportados em Liu e Nocedal (1989, Table 1) - Problemas de otimização não-linear irrestritos
 - **Características**: Método quasi-Newton com memória limitada
-- **Saída**: Resultados em formato LaTeX
+- **Saída**: Resultados detalhados em formato LaTeX e PDF com valores das variáveis
+- **Uso**: `python lbfgsb_solver.py`
 
-#### `mirror_gradient_algorith.py`
-- **Função**: Implementa o algoritmo Mirror Gradient
+#### `liu_nocedal/mirror_gradient_optimized.py`
+- **Função**: Implementa o algoritmo de Gradiente Espelhado com divergências de Bregman
 - **Problemas**: Coleção de Liu e Nocedal
-- **Características**: Método de gradiente espelhado para otimização
-- **Saída**: Resultados em formato LaTeX
+- **Características**: 
+  - Divergências de Bregman (euclidiana, entropia, norma-p)
+  - Passo adaptativo
+  - Restrições automáticas (bola, simplex, caixa)
+- **Saída**: Resultados detalhados em formato LaTeX e PDF
+- **Uso**: `python mirror_gradient_optimized.py`
 
-#### `descent_coordinate_algorithm.py`
-- **Função**: Implementa o algoritmo de Coordinate Descent
+#### `liu_nocedal/descent_coordinate_algorithm.py`
+- **Função**: Implementa o algoritmo de Descida por Coordenadas otimizado
 - **Problemas**: Coleção de Liu e Nocedal
-- **Características**: Otimização coordenada por coordenada
-- **Saída**: Resultados em formato LaTeX 
+- **Características**: 
+  - Seleção aleatória de blocos de coordenadas
+  - Minimização direta por blocos
+  - Tamanho de bloco configurável (padrão: 10)
+- **Saída**: Resultados detalhados em formato LaTeX e PDF
+- **Uso**: `python descent_coordinate_algorithm.py`
+
+### 🧪 **Arquivos e Utilitários**
 
 
-### 🧪 **Arquivos de Teste**
-
-#### `test_comparison.py`
-- **Função**: Testa o comparador de métodos com problemas selecionados
-- **Uso**: `python test_comparison.py`
-
-### 📊 **Arquivos de Conversão**
-
-#### `netlib_latex_to_pdf.py`
-- **Função**: Converte arquivos LaTeX individuais em PDF
-- **Uso**: `python netlib_latex_to_pdf.py`
+#### `liu_nocedal/latex_to_pdf.py`
+- **Função**: Converte arquivos LaTeX em PDF com tabelas detalhadas
+- **Características**: Gera tabelas com valores das variáveis em múltiplas colunas
+- **Uso**: Automático (chamado pelos solvers)
 
 ## 📂 **Diretórios**
 
-### `netlib_problems/`
+### `netlib_ipm_solver/netlib_problems/`
 - Contém os arquivos .mps da coleção NETLIB
 - 82 problemas de programação linear
 
-### `liu_nocedal_problems/`
+### `liu_nocedal/problems/`
 - Contém a definição dos problemas de Liu e Nocedal
-- `problems.py`: Implementação das funções objetivo
+- `setup_problems.py`: Implementação das funções objetivo e configurações
 
-### `latex_solution/`
+### `liu_nocedal/latex_solution/`
+- **`resultados_*.tex`**: Resultados detalhados de cada método
+- **`resultados_*_detalhado.tex`**: Tabelas com valores das variáveis
+- **PDFs gerados automaticamente**
+
+### `netlib_ipm_solver/latex_solution/`
 - **`resultados_netlib.tex`**: Arquivo principal com tabelas gerais
 - **`individual_problems/`**: Arquivos LaTeX individuais para cada problema
 - **`individual_problems_pdf/`**: PDFs gerados dos arquivos individuais
-- **`resultados_*.tex`**: Resultados específicos de cada método
 
-
-### 4. **Converter LaTeX para PDF:**
-```bash
-python netlib_latex_to_pdf.py
-```
 
 ## 📋 **Dependências**
 
+### Principais:
 - `numpy`: Computação numérica
 - `scipy`: Otimização e funções científicas
 - `highspy`: Solver HiGHS para programação linear
-- `pandas`: Manipulação de dados
-- `pdflatex`: Conversão LaTeX para PDF (biblioteca Python)
+
+### Para geração de relatórios:
+- `pdflatex`: Conversão LaTeX para PDF (MiKTeX no Windows)
+- `subprocess`: Execução de comandos do sistema
 
 
-## 📈 **Métodos Implementados**
-
-- **L-BFGS-B**: Método quasi-Newton com memória limitada
-- **Mirror Gradient**: Gradiente espelhado
-- **Coordinate Descent**: Descente coordenada
-- **Interior Point Method**: Método de pontos interiores (HiGHS)
-
-## 🔍 **Coleções de Problemas**
-
-- **NETLIB**: 82 problemas de programação linear
-- **Liu e Nocedal**: 16 Problemas de otimização não-linear
