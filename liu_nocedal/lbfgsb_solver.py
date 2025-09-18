@@ -5,7 +5,7 @@ from problems.setup_problems import*
 import time
 import os
 from datetime import datetime
-from latex_to_pdf import salvar_pdf, generate_latex_table
+from latex_to_pdf import salvar_pdf, generate_latex_table, generate_detailed_latex_table
 
 class LBFGSBSolver:
     """
@@ -141,7 +141,7 @@ class LBFGSBSolver:
                 print(f"  ✓ Sucesso: {result['iterations']} iterações, f* = {result['function_value']:.6e}")
             else:
                 print(f"  ✗ Falhou: {result['message']}")
-        
+
         print("\n" + "=" * 60)
         print("Resolução concluída!")
 
@@ -206,8 +206,13 @@ def main():
     
     # Gerar tabela LaTeX
     filename = f'liu_nocedal/latex_solution/resultados_lbfgsb.tex'
-    generate_latex_table(solver.results, filename, 'L-BFGS-B')
-    salvar_pdf(filename, 'liu_nocedal/latex_solution/')
+    # generate_latex_table(solver.results, filename, 'L-BFGS-B')
+    # salvar_pdf(filename, 'liu_nocedal/latex_solution/')
+    
+    # Gerar tabela detalhada com valores das variáveis
+    detailed_filename = f'liu_nocedal/latex_solution/resultados_lbfgsb.tex'
+    generate_detailed_latex_table(solver.results, detailed_filename, 'L-BFGS-B')
+    salvar_pdf(detailed_filename, 'liu_nocedal/latex_solution/')
     
     print("\nAnálise concluída!")
 

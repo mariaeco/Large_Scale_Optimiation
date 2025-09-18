@@ -1,23 +1,18 @@
 import numpy as np
-from numpy import dot, zeros
-from scipy.optimize import minimize_scalar, minimize
-from math import log
+from numpy import zeros
 from problems.setup_problems import*
 import time
-import os
-from datetime import datetime
-from latex_to_pdf import salvar_pdf, generate_latex_table
+from latex_to_pdf import salvar_pdf, generate_latex_table, generate_detailed_latex_table
 
 
 def calcular_gradiente(f, x):
     """
-    Calcula gradiente numericamente ou analiticamente
+    Calcula gradiente numericamente usando diferenças finitas centrais
     """
     n = len(x)
     grad = zeros(n)
     
     for i in range(n):
-        # Diferenças finitas centrais
         h = 1e-6
         x_plus = x.copy()
         x_plus[i] += h
@@ -29,59 +24,45 @@ def calcular_gradiente(f, x):
     return grad
 
 
-def gradiente_espelhado_otimizado(f, x0, eta, max_iter, tol, versao="norma_p", p=2):
-    """
-    Algoritmo otimizado do Gradiente Espelhado (Mirror Descent)
-    
-    Parâmetros:
-    - f: função objetivo
-    - x0: ponto inicial
-    - eta: parâmetro de passo
-    - max_iter: máximo de iterações
-    - tol: tolerância para convergência
-    - versao: tipo de função de distância ("norma_p" ou "entropia_negativa")
-    - p: parâmetro da norma-p (padrão 2)
-    """
-    
-    x = x0.copy()
-    fo = f(x0)
-    
-    for k in range(max_iter):
-        # 1. Calcular gradiente da função objetivo
-        grad_f = calcular_gradiente(f, x)
-        
-        # 2. Verificar convergência pela norma do gradiente
-        if np.linalg.norm(grad_f) <= tol:
-            break
-        
-        # 3. Atualizar usando fórmula fechada
-        if versao == "entropia_negativa":
-            # Para entropia negativa: x_new = exp(log(x) - eta * grad_f)
-            x_new = np.exp(np.log(np.maximum(x, 1e-10)) - eta * grad_f)
-        elif versao == "norma_p":
-            # Para norma-p: x_new = sign(y) * |y|^(1/(p-1))
-            # onde y = sign(x) * |x|^(p-1) - eta * grad_f
-            y = np.sign(x) * (np.abs(x) ** (p - 1)) - eta * grad_f
-            x_new = np.sign(y) * (np.abs(y) ** (1 / (p - 1)))
-        else:
-            # Fallback para euclidiana (p=2)
-            x_new = x - eta * grad_f
-        
-        # 4. Verificar convergência pela mudança no ponto
-        if np.linalg.norm(x_new - x) < tol:
-            x = x_new
-            fo = f(x)
-            break
-        
-        x = x_new
-        fo = f(x)
-    
-    return x, fo, k
+# =============================================================================
+# DIVERGÊNCIAS DE BREGMAN
+# =============================================================================
+
+def euclidean_phi(x):
+    """Função potencial para divergência euclidiana: φ(x) = (1/2)||x||²"""
+    return 0.5 * np.sum(x**2)
+
+def euclidean_grad_phi(x):
+    """Gradiente da função potencial euclidiana: ∇φ(x) = x"""
+    return x
+
+def entropy_phi(x):
+    """Função potencial para entropia: φ(x) = Σᵢ xᵢ log(xᵢ)"""
+    x_safe = np.maximum(x, 1e-10)  # Evitar log(0)
+    return np.sum(x_safe * np.log(x_safe))
+
+def entropy_grad_phi(x):
+    """Gradiente da função potencial de entropia: ∇φ(x) = 1 + log(x)"""
+    x_safe = np.maximum(x, 1e-10)
+    return 1 + np.log(x_safe)
+
+def p_norm_phi(x, p=2):
+    """Função potencial para norma-p: φ(x) = (1/p)||x||ᵖᵖ"""
+    return (1/p) * np.sum(np.abs(x)**p)
+
+def p_norm_grad_phi(x, p=2):
+    """Gradiente da função potencial norma-p: ∇φ(x) = sign(x) * |x|^(p-1)"""
+    return np.sign(x) * (np.abs(x) ** (p - 1))
+
+# =============================================================================
+# GRADIENTE ESPELHADO 
+# =============================================================================
 
 
-def gradiente_espelhado_adaptativo(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-3, versao="norma_p"):
+
+def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregman="euclidean", bounds=None, p=2):
     """
-    Algoritmo de Gradiente Espelhado com passo adaptativo
+    Algoritmo de Gradiente Espelhado com passo adaptativo e divergências de Bregman corretas
     
     Parâmetros:
     - f: função objetivo
@@ -89,7 +70,9 @@ def gradiente_espelhado_adaptativo(f, x0, eta_inicial=0.01, max_iter=1000, tol=1
     - eta_inicial: passo inicial
     - max_iter: máximo de iterações
     - tol: tolerância para convergência
-    - versao: tipo de função de distância
+    - bregman: tipo de divergência de Bregman ("euclidean", "entropy", "p_norm")
+    - bounds: tipo de restrição
+    - p: parâmetro para norma-p
     """
     
     x = x0.copy()
@@ -97,20 +80,59 @@ def gradiente_espelhado_adaptativo(f, x0, eta_inicial=0.01, max_iter=1000, tol=1
     fo = f(x0)
     last_improvement = 0
     
+    # Determinar tipo de restrição
+    if bounds is None:
+        constraint_type = "ball"
+        # Normalizar ponto inicial para dentro da bola unitária
+        x_norm = np.linalg.norm(x)
+        if x_norm > 1.0:
+            x = x / x_norm * 0.9
+    elif isinstance(bounds, list):
+        constraint_type = "box"
+    else:
+        constraint_type = bounds
+    
     for k in range(max_iter):
         # 1. Calcular gradiente da função objetivo
         grad_f = calcular_gradiente(f, x)
         
-        # 2. Verificar convergência
-        if np.linalg.norm(grad_f) <= tol:
-            break
+        # 2. Verificar convergência (tolerância mais realista)
+        # if np.linalg.norm(grad_f) <= tol:
+        #     break
         
-        # 3. Tentar atualização com passo atual
-        if versao == "entropia_negativa":
-            x_new = np.exp(np.log(np.maximum(x, 1e-10)) - eta * grad_f)
-        else:  # norma_p
-            y = np.sign(x) * (np.abs(x) ** 1) - eta * grad_f  # p=2
-            x_new = y
+        # 3. Aplicar Mirror Descent com divergências de Bregman corretas
+        if bregman == "euclidean":
+            x_new = x - eta * grad_f
+            if constraint_type == "ball":
+                x_norm = np.linalg.norm(x_new)
+                if x_norm > 1.0:
+                    x_new = x_new / x_norm * 0.99
+                    
+        elif bregman == "entropy":
+            x_safe = np.maximum(x, 1e-10)
+            x_new = np.exp(np.log(x_safe) - eta * grad_f)
+            if constraint_type == "simplex":
+                x_new = x_new / np.sum(x_new)
+                
+        elif bregman == "p_norm":
+            if p == 2:
+                x_new = x - eta * grad_f
+            else:
+                grad_phi_x = p_norm_grad_phi(x, p)
+                grad_phi_new = grad_phi_x - eta * grad_f
+                x_new = np.sign(grad_phi_new) * (np.abs(grad_phi_new) ** (1 / (p - 1)))
+            
+            if constraint_type == "ball":
+                p_norm = np.sum(np.abs(x_new) ** p) ** (1/p)
+                if p_norm > 1.0:
+                    x_new = x_new / p_norm * 0.99
+                    
+        elif constraint_type == "box":
+            x_new = x - eta * grad_f
+            for i, (lower, upper) in enumerate(bounds):
+                x_new[i] = np.clip(x_new[i], lower, upper)
+        else:
+            x_new = x - eta * grad_f
         
         # 4. Verificar se houve melhoria
         fo_new = f(x_new)
@@ -121,14 +143,14 @@ def gradiente_espelhado_adaptativo(f, x0, eta_inicial=0.01, max_iter=1000, tol=1
             x = x_new
             fo = fo_new
             last_improvement = k
-            eta = min(eta * 1.1, 1.0)  # Aumentar passo, mas limitar
+            eta = min(eta * 1.2, 2.0)
         else:
             # Pouca melhoria: diminuir passo
-            eta = eta * 0.9
-            if k - last_improvement > 10:
-                eta = max(eta, 1e-6)  # Evitar passo muito pequeno
+            eta = eta * 0.15
+            if k - last_improvement > 5:
+                eta = max(eta, 1e-8)
         
-        # 5. Verificar convergência pela mudança no ponto
+        # # 5. Verificar convergência pela mudança no ponto (tolerância mais realista)
         if np.linalg.norm(x_new - x) < tol:
             break
     
@@ -137,28 +159,28 @@ def gradiente_espelhado_adaptativo(f, x0, eta_inicial=0.01, max_iter=1000, tol=1
 
 class MirrorGradientOptimizedSolver:
     """
-    Classe para resolver problemas de otimização usando o método otimizado do Gradiente Espelhado
+    Classe para resolver problemas de otimização usando o método adaptativo do Gradiente Espelhado
     e gerar tabelas de resultados em formato LaTeX.
     """
     
-    def __init__(self, versao="norma_p", eta=0.01, adaptativo=False):
+    def __init__(self, eta=0.01, bregman="euclidean", p=2):
         """
-        Inicializa o solver com diferentes versões do gradiente espelhado.
+        Inicializa o solver com gradiente espelhado adaptativo.
         
         Args:
-            versao (str): Tipo de função de distância ('norma_p', 'entropia_negativa')
-            eta (float): Parâmetro de passo
-            adaptativo (bool): Se True, usa passo adaptativo
+            eta (float): Parâmetro de passo inicial
+            bregman (str): Tipo de divergência de Bregman ('euclidean', 'entropy', 'p_norm')
+            p (int): Parâmetro para norma-p
         """
         self.results = []
         self.problems_config = setup_problems()
-        self.versao = versao
         self.eta = eta
-        self.adaptativo = adaptativo
+        self.bregman = bregman
+        self.p = p
     
-    def solve_problem(self, problem_name, max_iter=1000, tol=1e-3):
+    def solve_problem(self, problem_name, max_iter=1000, tol=1e-6):
         """
-        Resolve um problema específico usando Gradiente Espelhado Otimizado.
+        Resolve um problema específico usando Gradiente Espelhado Adaptativo com restrições.
         
         Args:
             problem_name (str): Nome do problema
@@ -177,6 +199,7 @@ class MirrorGradientOptimizedSolver:
         if problem_name == 'ULTS0':
             n, x0, grid_shape, h = config['setup']()
             args = (grid_shape, h)
+            bounds = config['bounds']  # ULTS0 tem restrições de caixa
             
             # Função objetivo com argumentos
             def objective_with_args(x):
@@ -184,20 +207,19 @@ class MirrorGradientOptimizedSolver:
         else:
             n, x0 = config['setup']()
             args = config['args']
+            bounds = config['bounds']  # Pode ser None
             objective_with_args = config['objective']
+        
+        # Determinar tipo de restrição apropriado para cada problema
+        constraint_type = self._determine_constraint_type(problem_name, bounds)
         
         # Executar otimização
         start_time = time.time()
         
         try:
-            if self.adaptativo:
-                x_md, fo, iterations = gradiente_espelhado_adaptativo(
-                    objective_with_args, x0, self.eta, max_iter, tol, self.versao
-                )
-            else:
-                x_md, fo, iterations = gradiente_espelhado_otimizado(
-                    objective_with_args, x0, self.eta, max_iter, tol, self.versao
-                )
+            x_md, fo, iterations = gradiente_espelhado(
+                objective_with_args, x0, self.eta, max_iter, tol, self.bregman, constraint_type, self.p
+            )
             
             end_time = time.time()
             
@@ -213,9 +235,10 @@ class MirrorGradientOptimizedSolver:
                 'function_value': fo,
                 'x_value': x_md,
                 'gradient_norm': grad_norm,
-                'message': "Convergência atingida",
+                'message': f"Convergência atingida (restrição: {constraint_type})",
                 'execution_time': end_time - start_time,
-                'n_variables': n
+                'n_variables': n,
+                'constraint_type': constraint_type
             }
             
         except Exception as e:
@@ -229,12 +252,41 @@ class MirrorGradientOptimizedSolver:
                 'gradient_norm': float('inf'),
                 'message': f"Erro: {str(e)}",
                 'execution_time': end_time - start_time,
-                'n_variables': n
+                'n_variables': n,
+                'constraint_type': constraint_type
             }
         
         return result_dict
     
-    def solve_all_problems(self, max_iter=1000, tol=1e-3):
+    def _determine_constraint_type(self, problem_name, bounds):
+        """
+        Determina o tipo de restrição apropriado para cada problema.
+        """
+        if bounds is not None and isinstance(bounds, list):
+            return "box"  # Restrições de caixa
+        
+        # Mapear problemas para tipos de restrição apropriados
+        constraint_mapping = {
+            'ROSENBROCK': 'simplex',          # Problema de Rosenbrock na bola unitária
+            'EXTENDED_ROSENBROCK': 'ball',  # Problema de Rosenbrock estendido na bola unitária
+            'EXTENDED_POWELL': 'ball',      # Problema de Powell estendido na bola unitária
+            'FREUDENTHAL_ROTH': 'ball',     # Problema de Freudenthal-Roth na bola unitária
+            'ENGGVAL1': 'ball',             # Problema de Engvall na bola unitária
+            'TRIGONOMETRIC': 'simplex',  # Problema trigonométrico funciona bem no simplex
+            'PENALTY': 'ball',          # Problema de penalidade na bola unitária
+            'QOR': 'ball',              # Quadrático com restrições na bola
+            'GOR': 'ball',              # Quadrático com restrições na bola
+            'PSP': 'ball',              # Problema de penalidade na bola
+            'LINEAR_MINIMUM_SURFACE': 'ball',  # Superfície mínima na bola
+            'SQUARE_ROOT_1': 'ball',    # Raiz quadrada na bola
+            'SQUARE_ROOT_2': 'ball',    # Raiz quadrada na bola
+            'SPARSE_MATRIX_SQRT': 'ball',  # Matriz esparsa na bola
+            'ULTS0': 'box',             # ULTS0 já tem restrições de caixa
+        }
+        
+        return constraint_mapping.get(problem_name, 'box')  # Padrão: bola unitária
+    
+    def solve_all_problems(self, max_iter=1000, tol=1e-6):
         """
         Resolve todos os problemas configurados.
         
@@ -242,11 +294,9 @@ class MirrorGradientOptimizedSolver:
             max_iter (int): Número máximo de iterações
             tol (float): Tolerância para convergência
         """
-        print(f"Iniciando resolução de todos os problemas com Gradiente Espelhado Otimizado ({self.versao})...")
-        if self.adaptativo:
-            print(f"  - Modo: Adaptativo")
-        else:
-            print(f"  - Passo fixo: {self.eta}")
+        print(f"Iniciando resolução de todos os problemas com Gradiente Espelhado ({self.bregman})...")
+        print(f"  - Modo: Adaptativo")
+        print(f"  - Passo inicial: {self.eta}")
         print("=" * 70)
         
         self.results = []
@@ -275,7 +325,7 @@ class MirrorGradientOptimizedSolver:
             return
         
         print("\n" + "=" * 80)
-        print("RESUMO DOS RESULTADOS - GRADIENTE ESPELHADO OTIMIZADO")
+        print("RESUMO DOS RESULTADOS - GRADIENTE ESPELHADO ADAPTATIVO")
         print("=" * 80)
         
         successful = sum(1 for r in self.results if r['success'])
@@ -307,157 +357,36 @@ class MirrorGradientOptimizedSolver:
             print(f"{result['problem']:<25} {status:<8} {iterations:<10} {value:<15} {time_str:<10}")
 
 
-def compare_mirror_algorithms(problem_name, max_iter=1000, tol=1e-3):
-    """
-    Compara diferentes versões do algoritmo de gradiente espelhado
-    
-    Args:
-        problem_name (str): Nome do problema a ser testado
-        max_iter (int): Número máximo de iterações
-        tol (float): Tolerância para convergência
-    """
-    print(f"\nComparação: Diferentes versões do Gradiente Espelhado - {problem_name}")
-    print("=" * 70)
-    
-    # Configurar problema
-    solver_base = MirrorGradientOptimizedSolver(versao="norma_p", eta=0.01, adaptativo=False)
-    
-    if problem_name not in solver_base.problems_config:
-        print(f"Problema '{problem_name}' não encontrado!")
-        return
-    
-    config = solver_base.problems_config[problem_name]
-    
-    if problem_name == 'ULTS0':
-        n, x0, grid_shape, h = config['setup']()
-        args = (grid_shape, h)
-        
-        def objective_with_args(x):
-            return config['objective'](x, grid_shape, h)
-    else:
-        n, x0 = config['setup']()
-        args = config['args']
-        objective_with_args = config['objective']
-    
-    algorithms = [
-        # ("norma_p_fixo", "Norma-p (passo fixo)", "norma_p", 0.01, False),
-        ("norma_p_adaptativo", "Norma-p (adaptativo)", "norma_p", 0.01, True)
-        # ("entropia_fixo", "Entropia negativa (passo fixo)", "entropia_negativa", 0.01, False)
-        # ("entropia_adaptativo", "Entropia negativa (adaptativo)", "entropia_negativa", 0.01, True)
-    ]
-    
-    results = {}
-    
-    for algo_name, description, versao, eta, adaptativo in algorithms:
-        print(f"\n{description}:")
-        start_time = time.time()
-        try:
-            if adaptativo:
-                x_result, fo, iterations = gradiente_espelhado_adaptativo(
-                    objective_with_args, x0, eta, max_iter, tol, versao
-                )
-            else:
-                x_result, fo, iterations = gradiente_espelhado_otimizado(
-                    objective_with_args, x0, eta, max_iter, tol, versao
-                )
-            
-            time_taken = time.time() - start_time
-            grad_norm = np.linalg.norm(calcular_gradiente(objective_with_args, x_result))
-            
-            print(f"   ✓ Sucesso: {iterations + 1} iterações, f* = {fo:.6e}")
-            print(f"   ✓ Tempo: {time_taken:.3f}s, ||∇f|| = {grad_norm:.6e}")
-            
-            results[algo_name] = {
-                'success': True,
-                'iterations': iterations + 1,
-                'function_value': fo,
-                'time': time_taken,
-                'gradient_norm': grad_norm
-            }
-            
-        except Exception as e:
-            time_taken = time.time() - start_time
-            print(f"   ✗ Falhou: {str(e)}")
-            print(f"   ✗ Tempo: {time_taken:.3f}s")
-            
-            results[algo_name] = {
-                'success': False,
-                'iterations': 0,
-                'function_value': float('inf'),
-                'time': time_taken,
-                'gradient_norm': float('inf')
-            }
-    
-    # Comparação final
-    print("\n" + "=" * 70)
-    print("COMPARAÇÃO FINAL:")
-    print("-" * 70)
-    print(f"{'Algoritmo':<25} {'Iterações':<10} {'Tempo (s)':<10} {'||∇f||':<15}")
-    print("-" * 70)
-    
-    for algo_name, description, _, _, _ in algorithms:
-        if algo_name in results:
-            r = results[algo_name]
-            if r['success']:
-                print(f"{description:<25} {r['iterations']:<10} {r['time']:<10.3f} {r['gradient_norm']:<15.6e}")
-            else:
-                print(f"{description:<25} {'Falhou':<10} {r['time']:<10.3f} {'---':<15}")
-
-
 def main():
     """
-    Função principal para executar a análise.
+    Função principal para executar a análise com gradiente espelhado adaptativo.
     """
     print("=" * 80)
-    print("GRADIENTE ESPELHADO OTIMIZADO - COMPARAÇÃO DE VERSÕES")
+    print("GRADIENTE ESPELHADO")
     print("=" * 80)
     
-    versions = [
-        ('norma_p_fixo', 'Norma-p (passo fixo)', 'norma_p', 0.01, False),
-        ('norma_p_adaptativo', 'Norma-p (adaptativo)', 'norma_p', 0.01, True),
-        ('entropia_adaptativo', 'Entropia negativa (adaptativo)', 'entropia_negativa', 0.01, True)
-    ]
+    # Criar solver com tipo de Bregman específico
+    solver = MirrorGradientOptimizedSolver(eta=0.01, bregman='p_norm', p=2) #bregman_type: euclidean, entropy, p_norm
     
-    all_results = {}
+    # Resolver todos os problemas
+    solver.solve_all_problems(max_iter=1000, tol=1e-6)
     
-    for version_name, description, versao, eta, adaptativo in versions:
-        print(f"\n{description}")
-        print("-" * 60)
-        
-        # Criar solver com versão específica
-        solver = MirrorGradientOptimizedSolver(versao=versao, eta=eta, adaptativo=adaptativo)
-        
-        # Resolver todos os problemas
-        solver.solve_all_problems(max_iter=500, tol=1e-4)
-        
-        # Imprimir resumo
-        solver.print_summary()
-        
-        # Armazenar resultados
-        all_results[version_name] = solver.results
-        
-        # Gerar tabela LaTeX específica
-        filename = f'liu_nocedal/latex_solution/resultados_mirror_gradient_{version_name}.tex'
-        method_name = f'Gradiente Espelhado Otimizado ({description})'
-        generate_latex_table(solver.results, filename, method_name)
-        salvar_pdf(filename, 'liu_nocedal/latex_solution/')
+    # Imprimir resumo
+    solver.print_summary()
     
-    # Comparação final
-    print("\n" + "=" * 80)
-    print("COMPARAÇÃO FINAL DE PERFORMANCE")
-    print("=" * 80)
+    # Armazenar resultados
+    all_results = solver.results
     
-    for version_name, results in all_results.items():
-        successful = sum(1 for r in results if r['success'])
-        total = len(results)
-        avg_time = np.mean([r['execution_time'] for r in results if r['success']])
-        avg_iterations = np.mean([r['iterations'] for r in results if r['success']])
-        
-        print(f"{version_name.upper():<20}: {successful}/{total} sucessos, "
-              f"tempo médio: {avg_time:.3f}s, iterações médias: {avg_iterations:.1f}")
+     # Gerar tabela LaTeX específica
+    method_name = f'Gradiente Espelhado'
+    detailed_filename = f'liu_nocedal/latex_solution/resultados_mirror_gradient.tex'
+    generate_detailed_latex_table(solver.results, detailed_filename, method_name)
+    salvar_pdf(detailed_filename, 'liu_nocedal/latex_solution/')
     
-    print("\nAnálise concluída!")
-
 
 if __name__ == "__main__":
+    # Para executar apenas um exemplo simples, descomente a linha abaixo:
+    # exemplo_uso()
+    
+    # Para executar a análise completa, use:
     main()

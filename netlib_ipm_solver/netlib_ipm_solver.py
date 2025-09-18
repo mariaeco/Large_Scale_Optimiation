@@ -6,7 +6,9 @@ from time import perf_counter as pc
 from highspy import Highs
 import glob
 from construct_latex import create_latex_document, create_individual_problem_document
-from netlib_latex_to_pdf import save_pdf
+from latex_to_pdf import salvar_pdf #to print general pfd
+from netlib_latex_to_pdf import save_pdf #to print individual PROBLEMS pdfs
+
 
 
 
@@ -380,13 +382,15 @@ def main():
     solver.print_summary()
     
     # Salvar resultados
-    solver.save_results_to_csv('netlib_ipm_solver/latex_solution/resultados_netlib.csv')
-    solver.generate_latex_table('netlib_ipm_solver/latex_solution/resultados_netlib.tex')
+    solver.save_results_to_csv('netlib_ipm_solver/latex_solution/relatorio_geral_netlib.csv')
+    solver.generate_latex_table('netlib_ipm_solver/latex_solution/relatorio_geral_netlib.tex')
+    salvar_pdf('netlib_ipm_solver/latex_solution/relatorio_geral_netlib.tex', 'netlib_ipm_solver/latex_solution/')
     
     # Gerar arquivos individuais para cada problema
     print("\nGerando arquivos individuais para cada problema...")
-    solver.generate_individual_problem_files('netlib_ipm_solver/latex_solution/individual_problems/')
-    save_pdf('netlib_ipm_solver/latex_solution/individual_problems/', 'netlib_ipm_solver/latex_solution/individual_problems_pdf/')
+    solver.generate_individual_problem_files('netlib_ipm_solver/latex_solution/relatorio_individual_problems_tex/')
+    save_pdf('netlib_ipm_solver/latex_solution/relatorio_individual_problems_tex/', 
+        'netlib_ipm_solver/latex_solution/relatorio_individual_problems_pdf/')
     
     print("\nAnálise NETLIB concluída!")
 

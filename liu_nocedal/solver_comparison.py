@@ -9,9 +9,10 @@ import os
 from datetime import datetime
 
 # Importar os solvers
-from lbfgsb_solver_liu_nocedal import LBFGSBSolver
+from lbfgsb_solver import LBFGSBSolver
 from mirror_gradient_algorith import MirrorGradientSolver
 from descent_coordinate_algorithm import CoordinateDescentSolver
+from latex_to_pdf import salvar_pdf
 
 
 class ComparisonSolver:
@@ -116,7 +117,7 @@ class ComparisonSolver:
         print("COMPARAÇÃO CONCLUÍDA!")
         print("=" * 80)
     
-    def generate_comparison_latex(self, filename='PROJETO/latex_solution/comparacao_metodos.tex'):
+    def generate_comparison_latex(self, filename='liu_nocedal/latex_solution/comparacao_metodos.tex'):
         """
         Gera uma tabela LaTeX comparando os três métodos.
         
@@ -139,6 +140,7 @@ class ComparisonSolver:
             f.write(latex_content)
         
         print(f"Tabela comparativa LaTeX salva em: {filename}")
+        salvar_pdf(filename, 'liu_nocedal/latex_solution/')
     
     def _create_comparison_latex_document(self):
         """

@@ -1,4 +1,5 @@
 
+from re import I
 import numpy as np
 from numpy import dot, zeros
 from scipy.optimize import minimize_scalar, minimize
@@ -9,37 +10,7 @@ import os
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 import random
-from latex_to_pdf import salvar_pdf, generate_latex_table
-
-
-def gradiente_descendente(f, x0, alpha, max_iter, tol):
-    """
-    Pseudo-algoritmo do Gradiente Descendente
-    
-    Parâmetros:
-    - f: função objetivo
-    - x0: ponto inicial
-    - alpha: taxa de aprendizado
-    - max_iter: máximo de iterações
-    - tol: tolerância para convergência
-    """
-    
-    x = x0
-    
-    for k in range(max_iter):
-        # 1. Calcular gradiente
-        grad = calcular_gradiente(f, x)
-        
-        # 2. Atualizar todas as coordenadas simultaneamente
-        x_novo = x - alpha * grad
-        
-        # 3. Verificar convergência
-        if np.linalg.norm(x_novo - x) < tol:
-            break
-            
-        x = x_novo
-    
-    return x
+from latex_to_pdf import salvar_pdf, generate_latex_table, generate_detailed_latex_table
 
 
 def calcular_gradiente(f, x):
@@ -62,106 +33,9 @@ def calcular_gradiente(f, x):
     return grad
 
 
-def descida_por_coordenadas(f, x0, max_iter, tol):
-    """
-    Pseudo-algoritmo da Descida por Coordenadas
-    
-    Parâmetros:
-    - f: função objetivo
-    - x0: ponto inicial
-    - max_iter: máximo de iterações
-    - tol: tolerância para convergência
-    """
-    
-    x = x0
-    n = len(x)
-    historico = [x.copy()]
-    fo = f(x0)  # Inicializar fo com o valor inicial
-    
-    for k in range(max_iter):
-        x_anterior = x.copy()
-        
-        # 1. Atualizar cada coordenada sequencialmente
-        for i in range(n):
-            # 2. Minimizar f em relação à coordenada i
-            x[i] = minimizar_coordenada(f, x, i)
-        
-        # 3. Verificar convergência
-        if np.linalg.norm(x - x_anterior) < tol:
-            fo = f(x)  # Calcular valor final da função
-            break
-            
-        fo = f(x)  # Calcular valor da função no novo ponto
-        historico.append(x.copy())
-    
-    return x, fo, k 
-
-def minimizar_coordenada(f, x, i):
-    """
-    Minimiza f(x) em relação à coordenada i, mantendo outras fixas
-    """
-    
-    def funcao_1d(xi):
-        # Criar cópia de x com coordenada i alterada
-        x_temp = x.copy()
-        x_temp[i] = xi
-        return f(x_temp)
-    
-    # Resolver problema 1D usando busca linear ou método de Newton
-    resultado = minimize_1d(funcao_1d, x0=x[i])
-    return resultado.x
-
-def minimize_1d(f, x0, method='brent'):
-    """
-    Minimização 1D usando diferentes métodos
-    """
-    if method == 'brent':
-        # Método de Brent (busca linear)
-        resultado = minimize_scalar(f, method='brent')
-    elif method == 'newton':
-        # Método de Newton 1D
-        resultado = newton_1d(f, x0)
-    else:
-        # Fallback para busca linear simples
-        resultado = minimize_scalar(f, method='brent')
-    
-    return resultado
-
-def newton_1d(f, x0, max_iter=100, tol=1e-6):
-    """
-    Método de Newton 1D
-    """
-    x = x0
-    
-    for k in range(max_iter):
-        # Calcular primeira e segunda derivadas
-        fx = f(x)
-        fx_prime = derivada_primeira(f, x)
-        fx_double_prime = derivada_segunda(f, x)
-        
-        if abs(fx_double_prime) < 1e-12:
-            break
-            
-        # Atualização de Newton
-        x_novo = x - fx_prime / fx_double_prime
-        
-        if abs(x_novo - x) < tol:
-            break
-            
-        x = x_novo
-    
-    return x
-
-def derivada_primeira(f, x, h=1e-6):
-    """Calcula primeira derivada numericamente"""
-    return (f(x + h) - f(x - h)) / (2 * h)
-
-def derivada_segunda(f, x, h=1e-6):
-    """Calcula segunda derivada numericamente"""
-    return (f(x + h) - 2*f(x) + f(x - h)) / (h**2)
 
 
-def descida_por_coordenadas_otimizada(f, x0, max_iter, tol, block_size=None, strategy='random'):
+def descida_por_coordenadas(f, x0, max_iter, tol, block_size=None, strategy='greedy'):
     """
     Algoritmo otimizado da Descida por Coordenadas com blocos de coordenadas
     
@@ -172,6 +46,7 @@ def descida_por_coordenadas_otimizada(f, x0, max_iter, tol, block_size=None, str
     - tol: tolerância para convergência
     - block_size: tamanho do bloco de coordenadas (padrão: min(10, n//4))
     - strategy: estratégia de seleção ('random', 'cyclic', 'greedy')
+
     """
     
     x = x0.copy()
@@ -189,16 +64,26 @@ def descida_por_coordenadas_otimizada(f, x0, max_iter, tol, block_size=None, str
         # Selecionar coordenadas para atualizar
         if strategy == 'random':
             # Seleção aleatória de coordenadas
-            indices = random.sample(range(n), min(block_size, n))
+            # Garantir que todas as coordenadas sejam eventualmente selecionadas
+            if k % (n // block_size + 1) == 0:
+                # A cada n/block_size iterações, usar todas as coordenadas
+                indices = list(range(n))
+            else:
+                indices = random.sample(range(n), min(block_size, n))
         elif strategy == 'cyclic':
             # Seleção cíclica
             start_idx = k % n
             indices = [(start_idx + i) % n for i in range(min(block_size, n))]
         elif strategy == 'greedy':
-            # Seleção baseada no gradiente (maior magnitude)
-            grad = calcular_gradiente(f, x)
-            grad_magnitudes = np.abs(grad)
-            indices = np.argsort(grad_magnitudes)[-min(block_size, n):].tolist()
+            # Para problemas grandes, evitar cálculo de gradiente completo
+            if n > 500:
+                # Usar seleção aleatória para problemas grandes
+                indices = random.sample(range(n), min(block_size, n))
+            else:
+                # Seleção baseada no gradiente (maior magnitude) para problemas pequenos
+                grad = calcular_gradiente(f, x)
+                grad_magnitudes = np.abs(grad)
+                indices = np.argsort(grad_magnitudes)[-min(block_size, n):].tolist()
         else:
             # Fallback para todas as coordenadas
             indices = list(range(n))
@@ -213,12 +98,13 @@ def descida_por_coordenadas_otimizada(f, x0, max_iter, tol, block_size=None, str
             
         fo = f(x)
     
-    return x, fo, k
+    return x, fo, k+1
+
 
 
 def minimizar_bloco_coordenadas(f, x, indices):
     """
-    Minimiza f(x) em relação a um bloco de coordenadas simultaneamente
+    Método original usando scipy.optimize.minimize (fallback)
     
     Args:
         f: função objetivo
@@ -246,8 +132,8 @@ def minimizar_bloco_coordenadas(f, x, indices):
     
     # Minimizar usando scipy.optimize.minimize
     try:
-        resultado = minimize(funcao_bloco, x0_bloco, method='BFGS', 
-                           options={'gtol': 1e-6, 'maxiter': 50})
+        resultado = minimize(funcao_bloco, x0_bloco, method='L-BFGS-B', 
+                           options={'gtol': 1e-6, 'maxiter': 200})
         
         if resultado.success:
             # Atualizar coordenadas com os valores otimizados
@@ -266,124 +152,85 @@ def minimizar_bloco_coordenadas(f, x, indices):
     return x
 
 
-def descida_por_coordenadas_paralela(f, x0, max_iter, tol, block_size=None, n_workers=4):
+def minimizar_coordenada(f, x, i):
     """
-    Algoritmo de Descida por Coordenadas com processamento paralelo
-    
-    Parâmetros:
-    - f: função objetivo
-    - x0: ponto inicial
-    - max_iter: máximo de iterações
-    - tol: tolerância para convergência
-    - block_size: tamanho do bloco de coordenadas
-    - n_workers: número de workers para processamento paralelo
+    Minimiza f(x) em relação à coordenada i, mantendo outras fixas
     """
     
-    x = x0.copy()
-    n = len(x)
+    def funcao_1d(xi):
+        # Criar cópia de x com coordenada i alterada
+        x_temp = x.copy()
+        x_temp[i] = xi
+        return f(x_temp)
     
-    if block_size is None:
-        block_size = min(max(1, n // 4), 10)
-    
-    fo = f(x0)
-    
-    for k in range(max_iter):
-        x_anterior = x.copy()
-        
-        # Dividir coordenadas em blocos para processamento paralelo
-        blocks = []
-        for i in range(0, n, block_size):
-            block_indices = list(range(i, min(i + block_size, n)))
-            blocks.append(block_indices)
-        
-        # Processar blocos em paralelo
-        with ThreadPoolExecutor(max_workers=n_workers) as executor:
-            # Criar funções para cada bloco
-            futures = []
-            for block_indices in blocks:
-                future = executor.submit(minimizar_bloco_coordenadas, f, x.copy(), block_indices)
-                futures.append((future, block_indices))
-            
-            # Coletar resultados e atualizar x
-            for future, block_indices in futures:
-                try:
-                    x_block = future.result(timeout=30)  # timeout de 30s
-                    # Atualizar apenas as coordenadas deste bloco
-                    for i in block_indices:
-                        x[i] = x_block[i]
-                except Exception:
-                    # Fallback: minimizar coordenadas individualmente
-                    for i in block_indices:
-                        x[i] = minimizar_coordenada(f, x, i)
-        
-        # Verificar convergência
-        if np.linalg.norm(x - x_anterior) < tol:
-            fo = f(x)
-            break
-            
-        fo = f(x)
-    
-    return x, fo, k
+    # Resolver problema 1D usando busca linear ou método de Newton
+    resultado = minimize_1d(funcao_1d, x0=x[i], method='newton')
+    return resultado.x
 
 
-def descida_por_coordenadas_adaptativa(f, x0, max_iter, tol):
+
+def minimize_1d(f, x0, method='brent'):
     """
-    Algoritmo de Descida por Coordenadas com tamanho de bloco adaptativo
-    
-    Parâmetros:
-    - f: função objetivo
-    - x0: ponto inicial
-    - max_iter: máximo de iterações
-    - tol: tolerância para convergência
+    Minimização 1D usando diferentes métodos
     """
+    if method == 'brent':
+        # Método de Brent (busca linear) com limites mais restritivos
+        resultado = minimize_scalar(f, method='brent', options={'maxiter': 50})
+    elif method == 'newton':
+        # Método de Newton 1D
+        resultado = newton_1d(f, x0)
+    else:
+        # Fallback para busca linear simples
+        resultado = minimize_scalar(f, method='brent', options={'maxiter': 50})
     
-    x = x0.copy()
-    n = len(x)
-    
-    # Tamanho inicial do bloco
-    block_size = max(1, n // 8)
-    min_block_size = 1
-    max_block_size = min(n, 20)
-    
-    fo = f(x0)
-    last_improvement = 0
+    return resultado
+
+
+def newton_1d(f, x0, max_iter=100, tol=1e-6):
+    """
+    Método de Newton 1D
+    """
+    x = x0
     
     for k in range(max_iter):
-        x_anterior = x.copy()
-        fo_anterior = fo
+        # Calcular primeira e segunda derivadas
+        fx = f(x)
+        fx_prime = derivada_primeira(f, x)
+        fx_double_prime = derivada_segunda(f, x)
         
-        # Seleção aleatória de coordenadas
-        indices = random.sample(range(n), min(block_size, n))
-        
-        # Minimizar bloco
-        x = minimizar_bloco_coordenadas(f, x, indices)
-        fo = f(x)
-        
-        # Verificar melhoria
-        improvement = fo_anterior - fo
-        
-        if improvement > 1e-8:
-            # Boa melhoria: manter ou aumentar tamanho do bloco
-            last_improvement = k
-            if improvement > 1e-6 and block_size < max_block_size:
-                block_size = min(block_size + 1, max_block_size)
-        else:
-            # Pouca melhoria: diminuir tamanho do bloco
-            if k - last_improvement > 5 and block_size > min_block_size:
-                block_size = max(block_size - 1, min_block_size)
-        
-        # Verificar convergência
-        if np.linalg.norm(x - x_anterior) < tol:
+        if abs(fx_double_prime) < 1e-12:
             break
+            
+        # Atualização de Newton
+        x_novo = x - fx_prime / fx_double_prime
+        
+        if abs(x_novo - x) < tol:
+            break
+            
+        x = x_novo
     
-    return x, fo, k
+    # Retornar objeto similar ao OptimizeResult
+    class SimpleResult:
+        def __init__(self, x):
+            self.x = x
+    
+    return SimpleResult(x)
+
+
+def derivada_primeira(f, x, h=1e-6):
+    """Calcula primeira derivada numericamente"""
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+
+def derivada_segunda(f, x, h=1e-6):
+    """Calcula segunda derivada numericamente"""
+    return (f(x + h) - 2*f(x) + f(x - h)) / (h**2)
 
 
     
 class CoordinateDescentSolver:
     """
     Classe para resolver problemas de otimização usando o método da Descida por Coordenadas
-    e gerar tabelas de resultados em formato LaTeX.
     """
     
     def __init__(self, algorithm='optimized', block_size=None, strategy='random'):
@@ -391,7 +238,7 @@ class CoordinateDescentSolver:
         Inicializa o solver com diferentes algoritmos de descida por coordenadas.
         
         Args:
-            algorithm (str): Tipo de algoritmo ('original', 'optimized', 'parallel', 'adaptive')
+            algorithm (str): Tipo de algoritmo ('optimized', 'adaptive')
             block_size (int): Tamanho do bloco de coordenadas (None para automático)
             strategy (str): Estratégia de seleção ('random', 'cyclic', 'greedy')
         """
@@ -402,7 +249,7 @@ class CoordinateDescentSolver:
         self.strategy = strategy
     
     
-    def solve_problem(self, problem_name, max_iter=500, tol=1e-3):
+    def solve_problem(self, problem_name, max_iter=1000, tol=1e-6):
         """
         Resolve um problema específico usando Descida por Coordenadas.
         
@@ -437,28 +284,12 @@ class CoordinateDescentSolver:
         
         try:
             # Escolher algoritmo baseado na configuração
-            if self.algorithm == 'original':
-                x_cd, fo, iterations = descida_por_coordenadas(objective_with_args, x0, max_iter, tol)
-            elif self.algorithm == 'optimized':
-                x_cd, fo, iterations = descida_por_coordenadas_otimizada(
-                    objective_with_args, x0, max_iter, tol, 
-                    block_size=self.block_size, strategy=self.strategy
-                )
-            elif self.algorithm == 'parallel':
-                x_cd, fo, iterations = descida_por_coordenadas_paralela(
-                    objective_with_args, x0, max_iter, tol, 
-                    block_size=self.block_size, n_workers=4
-                )
-            elif self.algorithm == 'adaptive':
-                x_cd, fo, iterations = descida_por_coordenadas_adaptativa(
-                    objective_with_args, x0, max_iter, tol
-                )
-            else:
-                # Fallback para algoritmo otimizado
-                x_cd, fo, iterations = descida_por_coordenadas_otimizada(
-                    objective_with_args, x0, max_iter, tol, 
-                    block_size=self.block_size, strategy=self.strategy
-                )
+
+            x_cd, fo, iterations = descida_por_coordenadas(
+                objective_with_args, x0, max_iter, tol, 
+                block_size=self.block_size, strategy=self.strategy
+            )
+
             
             end_time = time.time()
             
@@ -568,157 +399,28 @@ class CoordinateDescentSolver:
             print(f"{result['problem']:<25} {status:<8} {iterations:<10} {value:<15} {time_str:<10}")
 
 
-def compare_with_lbfgsb(problem_name, max_iter=1000, tol=1e-6):
-    """
-    Compara diretamente o algoritmo otimizado de descida por coordenadas com L-BFGS-B
-    
-    Args:
-        problem_name (str): Nome do problema a ser testado
-        max_iter (int): Número máximo de iterações
-        tol (float): Tolerância para convergência
-    """
-    from scipy.optimize import minimize
-    
-    print(f"\nComparação: Descida por Coordenadas vs L-BFGS-B - {problem_name}")
-    print("=" * 70)
-    
-    # Configurar problema
-    solver = CoordinateDescentSolver(algorithm='optimized', strategy='greedy', block_size=5)
-    
-    if problem_name not in solver.problems_config:
-        print(f"Problema '{problem_name}' não encontrado!")
-        return
-    
-    config = solver.problems_config[problem_name]
-    
-    if problem_name == 'ULTS0':
-        n, x0, grid_shape, h = config['setup']()
-        args = (grid_shape, h)
-        
-        def objective_with_args(x):
-            return config['objective'](x, grid_shape, h)
-    else:
-        n, x0 = config['setup']()
-        args = config['args']
-        objective_with_args = config['objective']
-    
-    # Teste 1: Descida por Coordenadas Otimizada
-    print("1. Descida por Coordenadas Otimizada:")
-    start_time = time.time()
-    try:
-        x_cd, fo_cd, iterations_cd = descida_por_coordenadas_otimizada(
-            objective_with_args, x0, max_iter, tol, 
-            block_size=5, strategy='greedy'
-        )
-        time_cd = time.time() - start_time
-        grad_cd = calcular_gradiente(objective_with_args, x_cd)
-        grad_norm_cd = np.linalg.norm(grad_cd)
-        
-        print(f"   ✓ Sucesso: {iterations_cd} iterações, f* = {fo_cd:.6e}")
-        print(f"   ✓ Tempo: {time_cd:.3f}s, ||∇f|| = {grad_norm_cd:.6e}")
-        success_cd = True
-    except Exception as e:
-        time_cd = time.time() - start_time
-        print(f"   ✗ Falhou: {str(e)}")
-        print(f"   ✗ Tempo: {time_cd:.3f}s")
-        success_cd = False
-    
-    # Teste 2: L-BFGS-B
-    print("\n2. L-BFGS-B:")
-    start_time = time.time()
-    try:
-        result_lbfgsb = minimize(objective_with_args, x0, method='L-BFGS-B', 
-                                options={'maxiter': max_iter, 'gtol': tol})
-        time_lbfgsb = time.time() - start_time
-        
-        if result_lbfgsb.success:
-            print(f"   ✓ Sucesso: {result_lbfgsb.nit} iterações, f* = {result_lbfgsb.fun:.6e}")
-            print(f"   ✓ Tempo: {time_lbfgsb:.3f}s, ||∇f|| = {result_lbfgsb.jac:.6e if hasattr(result_lbfgsb, 'jac') else 'N/A'}")
-            success_lbfgsb = True
-        else:
-            print(f"   ✗ Falhou: {result_lbfgsb.message}")
-            print(f"   ✗ Tempo: {time_lbfgsb:.3f}s")
-            success_lbfgsb = False
-    except Exception as e:
-        time_lbfgsb = time.time() - start_time
-        print(f"   ✗ Falhou: {str(e)}")
-        print(f"   ✗ Tempo: {time_lbfgsb:.3f}s")
-        success_lbfgsb = False
-    
-    # Comparação
-    print("\n" + "=" * 70)
-    print("COMPARAÇÃO:")
-    if success_cd and success_lbfgsb:
-        speedup = time_lbfgsb / time_cd if time_cd > 0 else float('inf')
-        print(f"Speedup da Descida por Coordenadas: {speedup:.2f}x")
-        if time_cd < time_lbfgsb:
-            print("✓ Descida por Coordenadas foi mais rápida!")
-        else:
-            print("✗ L-BFGS-B foi mais rápido")
-    else:
-        print("Não foi possível comparar (um dos algoritmos falhou)")
 
 
 def main():
     """
     Função principal para executar a análise.
     """
-    print("=" * 80)
-    print("COMPARAÇÃO DE ALGORITMOS DE DESCIDA POR COORDENADAS")
-    print("=" * 80)
-    
-    algorithms = [
-        ('original', 'Algoritmo Original (1 coordenada por vez)'),
-        ('optimized', 'Algoritmo Otimizado (blocos de coordenadas)')
-        ('adaptive', 'Algoritmo Adaptativo (tamanho de bloco variável)')
-        ('parallel', 'Algoritmo Paralelo (processamento paralelo)')
-    ]
-    
-    all_results = {}
-    
-    for algorithm, description in algorithms:
-        print(f"\n{description}")
-        print("-" * 60)
-        
-        # Criar solver com algoritmo específico
-        if algorithm == 'optimized':
-            solver = CoordinateDescentSolver(algorithm='optimized', strategy='greedy', block_size=5)
-        else:
-            solver = CoordinateDescentSolver(algorithm=algorithm)
-        
-        # Resolver todos os problemas
-        solver.solve_all_problems(max_iter=500, tol=1e-4)
-        
-        # Imprimir resumo
-        solver.print_summary()
-        
-        # Armazenar resultados
-        all_results[algorithm] = solver.results
-        
-        # Gerar tabela LaTeX específica
-        filename = f'liu_nocedal/latex_solution/resultados_coordinate_descent_{algorithm}.tex'
-        method_name = f'Descida por Coordenadas ({algorithm})'
-        generate_latex_table(solver.results, filename, method_name)
-        salvar_pdf(filename, 'liu_nocedal/latex_solution/')
-    
-    # Comparação final
-    print("\n" + "=" * 80)
-    print("COMPARAÇÃO FINAL DE PERFORMANCE")
-    print("=" * 80)
-    
-    for algorithm, results in all_results.items():
-        successful = sum(1 for r in results if r['success'])
-        total = len(results)
-        avg_time = np.mean([r['execution_time'] for r in results if r['success']])
-        avg_iterations = np.mean([r['iterations'] for r in results if r['success']])
-        
-        print(f"{algorithm.upper():<12}: {successful}/{total} sucessos, "
-              f"tempo médio: {avg_time:.3f}s, iterações médias: {avg_iterations:.1f}")
-    
-    print("\nAnálise concluída!")
 
+    solver = CoordinateDescentSolver(algorithm='optimized', strategy='random', block_size=10)
 
+    # Resolver todos os problemas
+    solver.solve_all_problems(max_iter=1000, tol=1e-3)
+    
+    # Imprimir resumo
+    solver.print_summary()
 
+    
+     # Gerar tabela LaTeX específica
+    method_name = f'Gradiente Espelhado'
+    detailed_filename = f'liu_nocedal/latex_solution/resultados_descent_coordinate.tex'
+    generate_detailed_latex_table(solver.results, detailed_filename, method_name)
+    salvar_pdf(detailed_filename, 'liu_nocedal/latex_solution/')
+    
 
 if __name__ == "__main__":
     main()
