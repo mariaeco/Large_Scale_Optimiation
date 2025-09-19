@@ -60,7 +60,7 @@ def p_norm_grad_phi(x, p=2):
 
 
 
-def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregman="euclidean", bounds=None, p=2):
+def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregman="euclidean", bounds=None, p=2, stop_criterion="point_change"):
     """
     Algoritmo de Gradiente Espelhado com passo adaptativo e divergências de Bregman corretas
     
@@ -73,6 +73,7 @@ def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregma
     - bregman: tipo de divergência de Bregman ("euclidean", "entropy", "p_norm")
     - bounds: tipo de restrição
     - p: parâmetro para norma-p
+    - stop_criterion: critério de parada ("point_change" ou "gradient_norm")
     """
     
     x = x0.copy()
@@ -96,9 +97,10 @@ def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregma
         # 1. Calcular gradiente da função objetivo
         grad_f = calcular_gradiente(f, x)
         
-        # 2. Verificar convergência (tolerância mais realista)
-        # if np.linalg.norm(grad_f) <= tol:
-        #     break
+        # 2. Verificar convergência baseada no critério escolhido
+        if stop_criterion == "gradient_norm":
+            if np.linalg.norm(grad_f) <= tol:
+                break
         
         # 3. Aplicar Mirror Descent com divergências de Bregman corretas
         if bregman == "euclidean":
@@ -150,9 +152,10 @@ def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregma
             if k - last_improvement > 5:
                 eta = max(eta, 1e-8)
         
-        # # 5. Verificar convergência pela mudança no ponto (tolerância mais realista)
-        if np.linalg.norm(x_new - x) < tol:
-            break
+        # 5. Verificar convergência baseada no critério escolhido
+        if stop_criterion == "point_change":
+            if np.linalg.norm(x_new - x) < tol:
+                break
     
     return x, fo, k
 
@@ -163,7 +166,7 @@ class MirrorGradientOptimizedSolver:
     e gerar tabelas de resultados em formato LaTeX.
     """
     
-    def __init__(self, eta=0.01, bregman="euclidean", p=2):
+    def __init__(self, eta=0.01, bregman="euclidean", p=2, stop_criterion="point_change"):
         """
         Inicializa o solver com gradiente espelhado adaptativo.
         
@@ -171,12 +174,14 @@ class MirrorGradientOptimizedSolver:
             eta (float): Parâmetro de passo inicial
             bregman (str): Tipo de divergência de Bregman ('euclidean', 'entropy', 'p_norm')
             p (int): Parâmetro para norma-p
+            stop_criterion (str): Critério de parada ('point_change' ou 'gradient_norm')
         """
         self.results = []
         self.problems_config = setup_problems()
         self.eta = eta
         self.bregman = bregman
         self.p = p
+        self.stop_criterion = stop_criterion
     
     def solve_problem(self, problem_name, max_iter=1000, tol=1e-6):
         """
@@ -218,7 +223,7 @@ class MirrorGradientOptimizedSolver:
         
         try:
             x_md, fo, iterations = gradiente_espelhado(
-                objective_with_args, x0, self.eta, max_iter, tol, self.bregman, constraint_type, self.p
+                objective_with_args, x0, self.eta, max_iter, tol, self.bregman, constraint_type, self.p, self.stop_criterion
             )
             
             end_time = time.time()
@@ -235,7 +240,7 @@ class MirrorGradientOptimizedSolver:
                 'function_value': fo,
                 'x_value': x_md,
                 'gradient_norm': grad_norm,
-                'message': f"Convergência atingida (restrição: {constraint_type})",
+                'message': f"Convergência atingida (restrição: {constraint_type}, critério: {self.stop_criterion})",
                 'execution_time': end_time - start_time,
                 'n_variables': n,
                 'constraint_type': constraint_type
@@ -362,26 +367,45 @@ def main():
     Função principal para executar a análise com gradiente espelhado adaptativo.
     """
     print("=" * 80)
-    print("GRADIENTE ESPELHADO")
+    print("GRADIENTE ESPELHADO - TESTE DE CRITÉRIOS DE PARADA")
     print("=" * 80)
     
-    # Criar solver com tipo de Bregman específico
-    solver = MirrorGradientOptimizedSolver(eta=0.01, bregman='p_norm', p=2) #bregman_type: euclidean, entropy, p_norm
+    # Testar ambos os critérios de parada
+    criterios = [
+        ("point_change", "Mudança no Ponto"),
+        ("gradient_norm", "Norma do Gradiente")
+    ]
     
-    # Resolver todos os problemas
-    solver.solve_all_problems(max_iter=1000, tol=1e-6)
+    for criterio, descricao in criterios:
+        print(f"\n{'='*60}")
+        print(f"TESTANDO: {descricao}")
+        print(f"{'='*60}")
+        
+        # Criar solver com critério específico
+        solver = MirrorGradientOptimizedSolver(
+            eta=0.01, 
+            bregman='p_norm', 
+            p=2, 
+            stop_criterion=criterio
+        )
+        
+        # Resolver todos os problemas
+        solver.solve_all_problems(max_iter=1000, tol=1e-6)
+        
+        # Imprimir resumo
+        solver.print_summary()
+        
+        # Gerar tabela LaTeX específica
+        method_name = f'Gradiente Espelhado ({descricao})'
+        detailed_filename = f'liu_nocedal/latex_solution/resultados_mirror_gradient_{criterio}.tex'
+        generate_detailed_latex_table(solver.results, detailed_filename, method_name)
+        salvar_pdf(detailed_filename, 'liu_nocedal/latex_solution/')
+        
+        print(f"\nTabela gerada: {detailed_filename}")
     
-    # Imprimir resumo
-    solver.print_summary()
-    
-    # Armazenar resultados
-    all_results = solver.results
-    
-     # Gerar tabela LaTeX específica
-    method_name = f'Gradiente Espelhado'
-    detailed_filename = f'liu_nocedal/latex_solution/resultados_mirror_gradient.tex'
-    generate_detailed_latex_table(solver.results, detailed_filename, method_name)
-    salvar_pdf(detailed_filename, 'liu_nocedal/latex_solution/')
+    print(f"\n{'='*80}")
+    print("TESTE CONCLUÍDO - Compare os resultados dos dois critérios!")
+    print(f"{'='*80}")
     
 
 if __name__ == "__main__":
