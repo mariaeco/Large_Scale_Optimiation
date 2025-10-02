@@ -7,7 +7,7 @@ from highspy import Highs
 import glob
 from construct_latex import create_latex_document, create_individual_problem_document
 from latex_to_pdf import salvar_pdf #to print general pfd
-from netlib_latex_to_pdf import save_pdf #to print individual PROBLEMS pdfs
+
 
 
 

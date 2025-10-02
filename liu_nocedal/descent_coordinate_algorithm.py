@@ -414,8 +414,7 @@ def main():
     # Imprimir resumo
     solver.print_summary()
 
-    
-     # Gerar tabela LaTeX específica
+    # Gerar tabela LaTeX específica
     method_name = f'Gradiente Espelhado'
     detailed_filename = f'liu_nocedal/latex_solution/resultados_descent_coordinate.tex'
     generate_detailed_latex_table(solver.results, detailed_filename, method_name)

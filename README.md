@@ -2,6 +2,23 @@
 
 Este repositório implementa e compara diferentes métodos de otimização para problemas de larga escala, incluindo problemas da coleção NETLIB e problemas de Liu e Nocedal. O projeto foca em métodos eficientes para otimização não-linear e programação linear.
 
+
+
+## 📋 **Dependências**
+
+### Principais:
+- `numpy`: Computação numérica
+- `scipy`: Otimização e funções científicas
+- `highspy`: Solver HiGHS para programação linear
+
+### Para geração de relatórios:
+- `pdflatex`: Conversão LaTeX para PDF (MiKTeX)
+- `subprocess`: Execução de comandos do sistema
+
+
+*Instalar o MiKTeX para conversão do latex para pdf: [https://miktex.org/](https://miktex.org/)
+
+
 ## 📁 Estrutura do Projeto
 
 ### 🔧 **Arquivos Principais**
@@ -70,17 +87,5 @@ Este repositório implementa e compara diferentes métodos de otimização para 
 - **`resultados_netlib.tex`**: Arquivo principal com tabelas gerais
 - **`individual_problems/`**: Arquivos LaTeX individuais para cada problema
 - **`individual_problems_pdf/`**: PDFs gerados dos arquivos individuais
-
-
-## 📋 **Dependências**
-
-### Principais:
-- `numpy`: Computação numérica
-- `scipy`: Otimização e funções científicas
-- `highspy`: Solver HiGHS para programação linear
-
-### Para geração de relatórios:
-- `pdflatex`: Conversão LaTeX para PDF (MiKTeX no Windows)
-- `subprocess`: Execução de comandos do sistema
 
 

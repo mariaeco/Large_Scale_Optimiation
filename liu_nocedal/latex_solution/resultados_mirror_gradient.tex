@@ -1,0 +1,952 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{longtable}
+\usepackage{pdflscape}
+
+\geometry{a4paper, margin=1.5cm}
+
+\title{Resultados Detalhados - Método Gradiente Espelhado (Norma do Gradiente;) - Otimização de Grande Porte}
+\author{Maria Marcolina Lima Cardoso}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Resumo dos Resultados}
+
+A tabela abaixo apresenta um resumo dos resultados obtidos com o método Gradiente Espelhado (Norma do Gradiente;).
+
+\begin{table}[h!]
+\centering
+\caption{Resumo dos resultados}
+\label{tab:resumo}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Problema} & \textbf{Nº Variáveis} & \textbf{Iterações} & \textbf{Valor Mínimo} & \textbf{Tempo (s)} \\
+\midrule
+ROSENBROCK & 100 & 1000 & 4.686021e-02 & 0.589 \\
+EXTENDED ROSENBROCK & 100 & 1000 & 8.425325e-01 & 9.717 \\
+SQUARE ROOT 1 & 36 & 1000 & 3.267247e-04 & 1.275 \\
+SQUARE ROOT 2 & 36 & 1000 & 9.674945e-04 & 1.273 \\
+FREUDENTHAL ROTH & 100 & 1000 & 1.197555e+04 & 53.564 \\
+SPARSE MATRIX SQRT & 34 & 211 & 1.943508e-06 & 1.209 \\
+PENALTY & 100 & 12 & 7.381083e+00 & 0.176 \\
+TRIGONOMETRIC & 100 & 3 & 5.253008e-08 & 0.001 \\
+EXTENDED POWELL & 100 & 1000 & 4.991099e-03 & 11.527 \\
+QOR & 50 & 138 & 1.175472e+03 & 1.249 \\
+GOR & 50 & 1000 & 1.381118e+03 & 12.803 \\
+PSP & 50 & 1000 & 2.020485e+02 & 10.337 \\
+TRIDIAGONAL & 100 & 47 & 1.147887e-07 & 0.622 \\
+ENGGVAL1 & 100 & 34 & 1.090881e+02 & 0.727 \\
+LINEAR MINIMUM SURFACE & 36 & 123 & 1.000001e+00 & 0.354 \\
+ULTS0 & 64 & 1000 & 2.696351e-04 & 17.438 \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Valores das Variáveis}
+
+As tabelas abaixo apresentam os valores de cada variável para cada problema resolvido com sucesso.
+
+
+\newpage            
+\subsection{Problema: ROSENBROCK}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 100
+\item Iterações: 1000
+\item Valor mínimo: 4.686021e-02
+\item Tempo de execução: 0.589s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema ROSENBROCK} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.783733 & 2 & 0.613295 & 3 & 0.007070 \\
+4 & 0.008228 & 5 & 0.003920 & 6 & 0.014075 \\
+7 & 0.002050 & 8 & 0.001559 & 9 & 0.011154 \\
+10 & 0.005948 & 11 & 0.006140 & 12 & 0.013396 \\
+13 & 0.009212 & 14 & 0.007668 & 15 & 0.005151 \\
+16 & 0.001381 & 17 & 0.000607 & 18 & 0.005905 \\
+19 & 0.003336 & 20 & 0.008265 & 21 & 0.005774 \\
+22 & 0.005929 & 23 & 0.000918 & 24 & 0.007543 \\
+25 & 0.009938 & 26 & 0.001566 & 27 & 0.013835 \\
+28 & 0.011254 & 29 & 0.009551 & 30 & 0.007791 \\
+31 & 0.012315 & 32 & 0.004496 & 33 & 0.006434 \\
+34 & 0.009923 & 35 & 0.005147 & 36 & 0.006131 \\
+37 & 0.012455 & 38 & 0.010449 & 39 & 0.001113 \\
+40 & 0.001750 & 41 & 0.006108 & 42 & 0.014217 \\
+43 & 0.002820 & 44 & 0.007610 & 45 & 0.011142 \\
+46 & 0.014531 & 47 & 0.011270 & 48 & 0.016100 \\
+49 & 0.003222 & 50 & 0.004457 & 51 & 0.006829 \\
+52 & 0.003592 & 53 & 0.001418 & 54 & 0.015277 \\
+55 & 0.010336 & 56 & 0.001405 & 57 & 0.009851 \\
+58 & 0.012581 & 59 & 0.007292 & 60 & 0.016265 \\
+61 & 0.011633 & 62 & 0.014191 & 63 & 0.005882 \\
+64 & 0.010326 & 65 & 0.015284 & 66 & 0.016714 \\
+67 & 0.014836 & 68 & 0.005113 & 69 & 0.005801 \\
+70 & 0.014439 & 71 & 0.010087 & 72 & 0.013680 \\
+73 & 0.005241 & 74 & 0.002655 & 75 & 0.015914 \\
+76 & 0.001930 & 77 & 0.014814 & 78 & 0.013660 \\
+79 & 0.013142 & 80 & 0.016858 & 81 & 0.009097 \\
+82 & 0.002585 & 83 & 0.008226 & 84 & 0.012869 \\
+85 & 0.007376 & 86 & 0.004828 & 87 & 0.009180 \\
+88 & 0.010283 & 89 & 0.016110 & 90 & 0.016836 \\
+91 & 0.003459 & 92 & 0.004439 & 93 & 0.013750 \\
+94 & 0.013473 & 95 & 0.010364 & 96 & 0.013835 \\
+97 & 0.003465 & 98 & 0.003024 & 99 & 0.015261 \\
+100 & 0.015601 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: EXTENDED ROSENBROCK}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 100
+\item Iterações: 1000
+\item Valor mínimo: 8.425325e-01
+\item Tempo de execução: 9.717s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema EXTENDED ROSENBROCK} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.874436 & 2 & 0.764097 & 3 & 0.854880 \\
+4 & 0.730186 & 5 & 0.856867 & 6 & 0.733597 \\
+7 & 0.874492 & 8 & 0.764194 & 9 & 0.845405 \\
+10 & 0.714032 & 11 & 0.889592 & 12 & 0.790902 \\
+13 & 0.853890 & 14 & 0.728490 & 15 & 0.850980 \\
+16 & 0.723516 & 17 & 0.850344 & 18 & 0.722431 \\
+19 & 0.866302 & 20 & 0.749901 & 21 & 0.832200 \\
+22 & 0.691815 & 23 & 0.967989 & 24 & 0.938984 \\
+25 & 0.886074 & 26 & 0.784639 & 27 & 0.922591 \\
+28 & 0.850850 & 29 & 0.843334 & 30 & 0.710524 \\
+31 & 0.861523 & 32 & 0.741619 & 33 & 0.917701 \\
+34 & 0.841830 & 35 & 0.832600 & 36 & 0.692483 \\
+37 & 0.843763 & 38 & 0.711250 & 39 & 0.822586 \\
+40 & 0.675859 & 41 & 0.855145 & 42 & 0.730641 \\
+43 & 0.851849 & 44 & 0.725000 & 45 & 0.840404 \\
+46 & 0.705577 & 47 & 0.953268 & 48 & 0.908528 \\
+49 & 0.904214 & 50 & 0.817196 & 51 & 0.852262 \\
+52 & 0.725705 & 53 & 0.869857 & 54 & 0.756088 \\
+55 & 0.928588 & 56 & 0.861977 & 57 & 0.839171 \\
+58 & 0.703501 & 59 & 0.869866 & 60 & 0.756104 \\
+61 & 0.866672 & 62 & 0.750543 & 63 & 0.916233 \\
+64 & 0.839131 & 65 & 0.845208 & 66 & 0.713697 \\
+67 & 0.856003 & 68 & 0.732114 & 69 & 0.837086 \\
+70 & 0.699995 & 71 & 0.841878 & 72 & 0.708064 \\
+73 & 0.832016 & 74 & 0.691508 & 75 & 0.907466 \\
+76 & 0.823102 & 77 & 0.890698 & 78 & 0.792877 \\
+79 & 0.912564 & 80 & 0.832404 & 81 & 0.859461 \\
+82 & 0.738063 & 83 & 0.919877 & 84 & 0.845837 \\
+85 & 0.840101 & 86 & 0.705067 & 87 & 0.927393 \\
+88 & 0.859753 & 89 & 0.918035 & 90 & 0.842445 \\
+91 & 0.923952 & 92 & 0.853368 & 93 & 0.880352 \\
+94 & 0.774506 & 95 & 0.865251 & 96 & 0.748075 \\
+97 & 0.912158 & 98 & 0.831662 & 99 & 0.892852 \\
+100 & 0.796728 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: SQUARE ROOT 1}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 36
+\item Iterações: 1000
+\item Valor mínimo: 3.267247e-04
+\item Tempo de execução: 1.275s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema SQUARE ROOT 1} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.610654 & 2 & -0.266038 & 3 & -0.242131 \\
+4 & 0.497122 & 5 & -0.594868 & 6 & -0.820836 \\
+7 & -0.304637 & 8 & -0.099396 & 9 & -0.355039 \\
+10 & 0.308854 & 11 & 0.788246 & 12 & 0.915050 \\
+13 & -0.382449 & 14 & 0.617751 & 15 & 0.882927 \\
+16 & -0.910941 & 17 & -0.120144 & 18 & -0.882027 \\
+19 & 0.591368 & 20 & 0.311929 & 21 & 0.856052 \\
+22 & -0.050554 & 23 & 0.906735 & 24 & -0.116752 \\
+25 & -0.081445 & 26 & -0.782669 & 27 & 0.208740 \\
+28 & -1.067604 & 29 & 0.846643 & 30 & 0.373392 \\
+31 & -0.621371 & 32 & 1.754188 & 33 & 1.258393 \\
+34 & 0.071830 & 35 & -0.510657 & 36 & 0.295644 \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: SQUARE ROOT 2}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 36
+\item Iterações: 1000
+\item Valor mínimo: 9.674945e-04
+\item Tempo de execução: 1.273s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema SQUARE ROOT 2} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.218623 & 2 & -0.651539 & 3 & -0.551724 \\
+4 & 0.518415 & 5 & -0.842479 & 6 & -0.900421 \\
+7 & -0.621655 & 8 & -0.078286 & 9 & -0.381415 \\
+10 & 0.126485 & 11 & 0.561270 & 12 & 0.609180 \\
+13 & -0.009946 & 14 & 0.801383 & 15 & 0.819612 \\
+16 & -0.877080 & 17 & 0.095232 & 18 & -0.680548 \\
+19 & 0.878775 & 20 & 0.424550 & 21 & 0.776781 \\
+22 & 0.065965 & 23 & 1.122496 & 24 & 0.064283 \\
+25 & -0.016638 & 26 & -0.669904 & 27 & 0.191773 \\
+28 & -1.058673 & 29 & 0.866040 & 30 & 0.359255 \\
+31 & -0.799694 & 32 & 1.930150 & 33 & 1.070533 \\
+34 & -0.119601 & 35 & -0.729553 & 36 & 0.021032 \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: FREUDENTHAL ROTH}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 100
+\item Iterações: 1000
+\item Valor mínimo: 1.197555e+04
+\item Tempo de execução: 53.564s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema FREUDENTHAL ROTH} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 7.048997 & 2 & -1.132581 & 3 & -1.519367 \\
+4 & -1.535175 & 5 & -1.535823 & 6 & -1.535841 \\
+7 & -1.535851 & 8 & -1.535842 & 9 & -1.535849 \\
+10 & -1.535845 & 11 & -1.535845 & 12 & -1.535850 \\
+13 & -1.535838 & 14 & -1.535859 & 15 & -1.535828 \\
+16 & -1.535870 & 17 & -1.535816 & 18 & -1.535883 \\
+19 & -1.535803 & 20 & -1.535897 & 21 & -1.535789 \\
+22 & -1.535910 & 23 & -1.535775 & 24 & -1.535924 \\
+25 & -1.535762 & 26 & -1.535936 & 27 & -1.535751 \\
+28 & -1.535947 & 29 & -1.535740 & 30 & -1.535957 \\
+31 & -1.535731 & 32 & -1.535966 & 33 & -1.535723 \\
+34 & -1.535973 & 35 & -1.535716 & 36 & -1.535980 \\
+37 & -1.535709 & 38 & -1.535986 & 39 & -1.535703 \\
+40 & -1.535992 & 41 & -1.535698 & 42 & -1.535997 \\
+43 & -1.535692 & 44 & -1.536003 & 45 & -1.535687 \\
+46 & -1.536008 & 47 & -1.535682 & 48 & -1.536013 \\
+49 & -1.535676 & 50 & -1.536019 & 51 & -1.535670 \\
+52 & -1.536025 & 53 & -1.535665 & 54 & -1.536029 \\
+55 & -1.535661 & 56 & -1.536033 & 57 & -1.535658 \\
+58 & -1.536034 & 59 & -1.535659 & 60 & -1.536032 \\
+61 & -1.535663 & 62 & -1.536025 & 63 & -1.535672 \\
+64 & -1.536013 & 65 & -1.535687 & 66 & -1.535996 \\
+67 & -1.535707 & 68 & -1.535974 & 69 & -1.535732 \\
+70 & -1.535947 & 71 & -1.535761 & 72 & -1.535916 \\
+73 & -1.535792 & 74 & -1.535884 & 75 & -1.535825 \\
+76 & -1.535851 & 77 & -1.535857 & 78 & -1.535821 \\
+79 & -1.535886 & 80 & -1.535793 & 81 & -1.535911 \\
+82 & -1.535771 & 83 & -1.535930 & 84 & -1.535754 \\
+85 & -1.535944 & 86 & -1.535745 & 87 & -1.535950 \\
+88 & -1.535741 & 89 & -1.535950 & 90 & -1.535744 \\
+91 & -1.535944 & 92 & -1.535754 & 93 & -1.535932 \\
+94 & -1.535768 & 95 & -1.535916 & 96 & -1.535786 \\
+97 & -1.535897 & 98 & -1.535819 & 99 & -1.536177 \\
+100 & -1.543290 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: SPARSE MATRIX SQRT}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 34
+\item Iterações: 211
+\item Valor mínimo: 1.943508e-06
+\item Tempo de execução: 1.209s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema SPARSE MATRIX SQRT} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.840420 & 2 & -0.754147 & 3 & 0.411310 \\
+4 & -0.285091 & 5 & -0.132362 & 6 & -0.993732 \\
+7 & -0.953688 & 8 & 0.920147 & 9 & -0.629644 \\
+10 & -0.506369 & 11 & 0.998786 & 12 & -0.491094 \\
+13 & -0.602016 & 14 & 0.939535 & 15 & -0.930078 \\
+16 & -0.999200 & 17 & -0.026520 & 18 & -0.404068 \\
+19 & 0.279380 & 20 & -0.850916 & 21 & 0.923472 \\
+22 & 0.193510 & 23 & 0.936477 & 24 & -0.885950 \\
+25 & 0.176009 & 26 & -0.529131 & 27 & 0.149936 \\
+28 & -0.985135 & 29 & -0.811569 & 30 & 0.997803 \\
+31 & -0.321537 & 32 & -0.158533 & 33 & 0.905540 \\
+34 & -0.105897 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: PENALTY}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 100
+\item Iterações: 12
+\item Valor mínimo: 7.381083e+00
+\item Tempo de execução: 0.176s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema PENALTY} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.869127 & 2 & 0.869137 & 3 & 0.869131 \\
+4 & 0.869134 & 5 & 0.869124 & 6 & 0.869135 \\
+7 & 0.869122 & 8 & 0.869123 & 9 & 0.869135 \\
+10 & 0.869132 & 11 & 0.869122 & 12 & 0.869132 \\
+13 & 0.869126 & 14 & 0.869132 & 15 & 0.869132 \\
+16 & 0.869121 & 17 & 0.869129 & 18 & 0.869125 \\
+19 & 0.869133 & 20 & 0.869130 & 21 & 0.869120 \\
+22 & 0.869123 & 23 & 0.869125 & 24 & 0.869134 \\
+25 & 0.869124 & 26 & 0.869134 & 27 & 0.869130 \\
+28 & 0.869120 & 29 & 0.869130 & 30 & 0.869132 \\
+31 & 0.869126 & 32 & 0.869132 & 33 & 0.869129 \\
+34 & 0.869135 & 35 & 0.869129 & 36 & 0.869134 \\
+37 & 0.869128 & 38 & 0.869122 & 39 & 0.869131 \\
+40 & 0.869120 & 41 & 0.869137 & 42 & 0.869140 \\
+43 & 0.869121 & 44 & 0.869128 & 45 & 0.869137 \\
+46 & 0.869129 & 47 & 0.869132 & 48 & 0.869125 \\
+49 & 0.869140 & 50 & 0.869124 & 51 & 0.869138 \\
+52 & 0.869138 & 53 & 0.869135 & 54 & 0.869133 \\
+55 & 0.869124 & 56 & 0.869128 & 57 & 0.869125 \\
+58 & 0.869134 & 59 & 0.869122 & 60 & 0.869137 \\
+61 & 0.869130 & 62 & 0.869133 & 63 & 0.869126 \\
+64 & 0.869125 & 65 & 0.869129 & 66 & 0.869121 \\
+67 & 0.869122 & 68 & 0.869133 & 69 & 0.869122 \\
+70 & 0.869133 & 71 & 0.869128 & 72 & 0.869128 \\
+73 & 0.869128 & 74 & 0.869126 & 75 & 0.869137 \\
+76 & 0.869128 & 77 & 0.869128 & 78 & 0.869126 \\
+79 & 0.869140 & 80 & 0.869120 & 81 & 0.869129 \\
+82 & 0.869137 & 83 & 0.869121 & 84 & 0.869123 \\
+85 & 0.869127 & 86 & 0.869131 & 87 & 0.869122 \\
+88 & 0.869120 & 89 & 0.869120 & 90 & 0.869126 \\
+91 & 0.869130 & 92 & 0.869138 & 93 & 0.869139 \\
+94 & 0.869129 & 95 & 0.869130 & 96 & 0.869135 \\
+97 & 0.869137 & 98 & 0.869122 & 99 & 0.869126 \\
+100 & 0.869129 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: TRIGONOMETRIC}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 1
+\item Iterações: 3
+\item Valor mínimo: 5.253008e-08
+\item Tempo de execução: 0.001s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema TRIGONOMETRIC} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.000229 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: EXTENDED POWELL}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 100
+\item Iterações: 1000
+\item Valor mínimo: 4.991099e-03
+\item Tempo de execução: 11.527s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema EXTENDED POWELL} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.100399 & 2 & -0.010001 & 3 & 0.049629 \\
+4 & 0.050407 & 5 & 0.088108 & 6 & -0.008795 \\
+7 & 0.043681 & 8 & 0.044209 & 9 & 0.103581 \\
+10 & -0.010325 & 11 & 0.051176 & 12 & 0.052030 \\
+13 & 0.096146 & 14 & -0.009592 & 15 & 0.047561 \\
+16 & 0.048246 & 17 & 0.101727 & 18 & -0.010139 \\
+19 & 0.050275 & 20 & 0.051084 & 21 & 0.094692 \\
+22 & -0.009449 & 23 & 0.046870 & 24 & 0.047524 \\
+25 & 0.083571 & 26 & -0.008342 & 27 & 0.041890 \\
+28 & 0.042346 & 29 & 0.102020 & 30 & -0.010170 \\
+31 & 0.050417 & 32 & 0.051234 & 33 & 0.101655 \\
+34 & -0.010124 & 35 & 0.050240 & 36 & 0.051047 \\
+37 & 0.098995 & 38 & -0.009876 & 39 & 0.048947 \\
+40 & 0.049693 & 41 & 0.103068 & 42 & -0.010274 \\
+43 & 0.050927 & 44 & 0.051768 & 45 & 0.103363 \\
+46 & -0.010287 & 47 & 0.051070 & 48 & 0.051918 \\
+49 & 0.105106 & 50 & -0.010378 & 51 & 0.051911 \\
+52 & 0.052803 & 53 & 0.103073 & 54 & -0.010275 \\
+55 & 0.050929 & 56 & 0.051771 & 57 & 0.100706 \\
+58 & -0.010043 & 59 & 0.049779 & 60 & 0.050564 \\
+61 & 0.100992 & 62 & -0.010072 & 63 & 0.049918 \\
+64 & 0.050710 & 65 & 0.102386 & 66 & -0.010213 \\
+67 & 0.050596 & 68 & 0.051421 & 69 & 0.085788 \\
+70 & -0.008562 & 71 & 0.042941 & 72 & 0.043433 \\
+73 & 0.100455 & 74 & -0.010015 & 75 & 0.049657 \\
+76 & 0.050436 & 77 & 0.098917 & 78 & -0.009868 \\
+79 & 0.048909 & 80 & 0.049653 & 81 & 0.096724 \\
+82 & -0.009651 & 83 & 0.047841 & 84 & 0.048537 \\
+85 & 0.091944 & 86 & -0.009176 & 87 & 0.045504 \\
+88 & 0.046103 & 89 & 0.099389 & 90 & -0.009911 \\
+91 & 0.049139 & 92 & 0.049894 & 93 & 0.104751 \\
+94 & -0.010351 & 95 & 0.051739 & 96 & 0.052622 \\
+97 & 0.103893 & 98 & -0.010359 & 99 & 0.051328 \\
+100 & 0.052189 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: QOR}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 50
+\item Iterações: 138
+\item Valor mínimo: 1.175472e+03
+\item Tempo de execução: 1.249s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema QOR} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.592340 & 2 & -0.711139 & 3 & 0.062859 \\
+4 & -2.651212 & 5 & 1.583543 & 6 & 4.022926 \\
+7 & 0.143646 & 8 & 1.925017 & 9 & -0.062597 \\
+10 & -0.639164 & 11 & 0.598823 & 12 & 0.446009 \\
+13 & 1.281047 & 14 & 0.710158 & 15 & -0.877588 \\
+16 & -3.034509 & 17 & -1.386284 & 18 & 0.740487 \\
+19 & -7.111951 & 20 & 1.374438 & 21 & 3.570470 \\
+22 & 2.265507 & 23 & 2.566250 & 24 & 3.754935 \\
+25 & -2.326665 & 26 & 1.211354 & 27 & 1.372508 \\
+28 & 2.311041 & 29 & -0.736889 & 30 & -0.475745 \\
+31 & 0.693691 & 32 & -2.399043 & 33 & 3.805761 \\
+34 & 2.122542 & 35 & -3.201403 & 36 & 1.106410 \\
+37 & 0.354961 & 38 & -1.581341 & 39 & -1.476433 \\
+40 & 4.309958 & 41 & 0.681711 & 42 & 2.354111 \\
+43 & -1.034077 & 44 & 1.978022 & 45 & -0.338265 \\
+46 & -0.357893 & 47 & -3.517804 & 48 & -0.099782 \\
+49 & -3.304149 & 50 & 1.197329 &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: GOR}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 50
+\item Iterações: 1000
+\item Valor mínimo: 1.381118e+03
+\item Tempo de execução: 12.803s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema GOR} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & -1.797453 & 2 & -0.344662 & 3 & -3.039090 \\
+4 & -0.105821 & 5 & 7.364402 & 6 & 1.160303 \\
+7 & 3.891065 & 8 & 0.258955 & 9 & 0.463099 \\
+10 & 0.275327 & 11 & 0.229577 & 12 & -0.062902 \\
+13 & -0.402834 & 14 & -1.750804 & 15 & -7.138909 \\
+16 & -0.838893 & 17 & -1.099890 & 18 & -9.498479 \\
+19 & -2.077505 & 20 & 9.444480 & 21 & 1.362509 \\
+22 & -0.475747 & 23 & 8.477569 & 24 & -5.549439 \\
+25 & 0.876300 & 26 & 0.667616 & 27 & 4.120711 \\
+28 & 0.458182 & 29 & -0.171424 & 30 & 0.711489 \\
+31 & -1.608439 & 32 & 5.197006 & 33 & 8.944898 \\
+34 & -2.283130 & 35 & 1.316674 & 36 & 0.198791 \\
+37 & -1.012306 & 38 & -1.597175 & 39 & 10.655050 \\
+40 & 4.075131 & 41 & 4.114710 & 42 & -6.319525 \\
+43 & 2.147689 & 44 & -0.576187 & 45 & 0.480699 \\
+46 & -5.348487 & 47 & -2.502688 & 48 & -0.267878 \\
+49 & 6.360164 & 50 & -0.184988 &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: PSP}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 50
+\item Iterações: 1000
+\item Valor mínimo: 2.020485e+02
+\item Tempo de execução: 10.337s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema PSP} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 4.999680 & 2 & 4.943251 & 3 & 5.002957 \\
+4 & 2.903055 & 5 & 4.995767 & 6 & 4.957331 \\
+7 & 4.999815 & 8 & 3.497067 & 9 & 5.003498 \\
+10 & 4.702530 & 11 & 4.992463 & 12 & 4.793302 \\
+13 & 4.744471 & 14 & 0.983895 & 15 & 5.270639 \\
+16 & 1.082733 & 17 & 3.713819 & 18 & 5.017914 \\
+19 & 2.736209 & 20 & 2.646902 & 21 & 3.409175 \\
+22 & 4.989821 & 23 & 0.971662 & 24 & 4.969095 \\
+25 & 2.233419 & 26 & 3.583677 & 27 & 5.042516 \\
+28 & 5.002862 & 29 & 4.252622 & 30 & 4.994588 \\
+31 & 5.000522 & 32 & 4.933846 & 33 & 1.455191 \\
+34 & 5.028233 & 35 & 4.995679 & 36 & 4.532510 \\
+37 & 3.706557 & 38 & 4.512983 & 39 & 5.894917 \\
+40 & 5.005487 & 41 & 4.113976 & 42 & 1.836563 \\
+43 & 4.999966 & 44 & 3.434053 & 45 & 4.990714 \\
+46 & 1.646628 & 47 & 3.448910 & 48 & 3.608385 \\
+49 & 1.737528 & 50 & 5.008195 &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: TRIDIAGONAL}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 100
+\item Iterações: 47
+\item Valor mínimo: 1.147887e-07
+\item Tempo de execução: 0.622s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema TRIDIAGONAL} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.999834 & 2 & 0.499891 & 3 & 0.249930 \\
+4 & 0.124958 & 5 & 0.062478 & 6 & 0.031242 \\
+7 & 0.015628 & 8 & 0.007823 & 9 & 0.003923 \\
+10 & 0.001974 & 11 & 0.001001 & 12 & 0.000515 \\
+13 & 0.000274 & 14 & 0.000152 & 15 & 0.000093 \\
+16 & 0.000062 & 17 & 0.000048 & 18 & 0.000040 \\
+19 & 0.000036 & 20 & 0.000034 & 21 & 0.000033 \\
+22 & 0.000032 & 23 & 0.000031 & 24 & 0.000031 \\
+25 & 0.000030 & 26 & 0.000030 & 27 & 0.000029 \\
+28 & 0.000029 & 29 & 0.000029 & 30 & 0.000029 \\
+31 & 0.000029 & 32 & 0.000029 & 33 & 0.000030 \\
+34 & 0.000029 & 35 & 0.000031 & 36 & 0.000030 \\
+37 & 0.000031 & 38 & 0.000031 & 39 & 0.000032 \\
+40 & 0.000032 & 41 & 0.000033 & 42 & 0.000033 \\
+43 & 0.000034 & 44 & 0.000035 & 45 & 0.000035 \\
+46 & 0.000036 & 47 & 0.000036 & 48 & 0.000037 \\
+49 & 0.000037 & 50 & 0.000038 & 51 & 0.000038 \\
+52 & 0.000038 & 53 & 0.000038 & 54 & 0.000039 \\
+55 & 0.000038 & 56 & 0.000038 & 57 & 0.000038 \\
+58 & 0.000038 & 59 & 0.000037 & 60 & 0.000036 \\
+61 & 0.000036 & 62 & 0.000035 & 63 & 0.000035 \\
+64 & 0.000034 & 65 & 0.000034 & 66 & 0.000032 \\
+67 & 0.000033 & 68 & 0.000030 & 69 & 0.000031 \\
+70 & 0.000029 & 71 & 0.000029 & 72 & 0.000027 \\
+73 & 0.000028 & 74 & 0.000025 & 75 & 0.000026 \\
+76 & 0.000024 & 77 & 0.000025 & 78 & 0.000023 \\
+79 & 0.000025 & 80 & 0.000023 & 81 & 0.000024 \\
+82 & 0.000023 & 83 & 0.000025 & 84 & 0.000024 \\
+85 & 0.000025 & 86 & 0.000025 & 87 & 0.000026 \\
+88 & 0.000025 & 89 & 0.000026 & 90 & 0.000025 \\
+91 & 0.000025 & 92 & 0.000024 & 93 & 0.000024 \\
+94 & 0.000021 & 95 & 0.000021 & 96 & 0.000018 \\
+97 & 0.000016 & 98 & 0.000013 & 99 & 0.000010 \\
+100 & 0.000007 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: ENGGVAL1}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 100
+\item Iterações: 34
+\item Valor mínimo: 1.090881e+02
+\item Tempo de execução: 0.727s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema ENGGVAL1} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.901027 & 2 & 0.545890 & 3 & 0.651178 \\
+4 & 0.624195 & 5 & 0.631499 & 6 & 0.629548 \\
+7 & 0.630071 & 8 & 0.629931 & 9 & 0.629968 \\
+10 & 0.629958 & 11 & 0.629961 & 12 & 0.629960 \\
+13 & 0.629961 & 14 & 0.629961 & 15 & 0.629961 \\
+16 & 0.629961 & 17 & 0.629961 & 18 & 0.629961 \\
+19 & 0.629961 & 20 & 0.629961 & 21 & 0.629961 \\
+22 & 0.629961 & 23 & 0.629961 & 24 & 0.629961 \\
+25 & 0.629961 & 26 & 0.629961 & 27 & 0.629961 \\
+28 & 0.629961 & 29 & 0.629961 & 30 & 0.629961 \\
+31 & 0.629961 & 32 & 0.629961 & 33 & 0.629961 \\
+34 & 0.629960 & 35 & 0.629960 & 36 & 0.629960 \\
+37 & 0.629960 & 38 & 0.629959 & 39 & 0.629959 \\
+40 & 0.629958 & 41 & 0.629957 & 42 & 0.629956 \\
+43 & 0.629955 & 44 & 0.629954 & 45 & 0.629953 \\
+46 & 0.629953 & 47 & 0.629953 & 48 & 0.629953 \\
+49 & 0.629953 & 50 & 0.629954 & 51 & 0.629955 \\
+52 & 0.629956 & 53 & 0.629957 & 54 & 0.629957 \\
+55 & 0.629958 & 56 & 0.629959 & 57 & 0.629959 \\
+58 & 0.629959 & 59 & 0.629959 & 60 & 0.629959 \\
+61 & 0.629959 & 62 & 0.629959 & 63 & 0.629959 \\
+64 & 0.629959 & 65 & 0.629959 & 66 & 0.629959 \\
+67 & 0.629959 & 68 & 0.629959 & 69 & 0.629959 \\
+70 & 0.629959 & 71 & 0.629958 & 72 & 0.629957 \\
+73 & 0.629956 & 74 & 0.629955 & 75 & 0.629954 \\
+76 & 0.629953 & 77 & 0.629952 & 78 & 0.629951 \\
+79 & 0.629951 & 80 & 0.629952 & 81 & 0.629952 \\
+82 & 0.629953 & 83 & 0.629954 & 84 & 0.629955 \\
+85 & 0.629956 & 86 & 0.629957 & 87 & 0.629958 \\
+88 & 0.629958 & 89 & 0.629958 & 90 & 0.629958 \\
+91 & 0.629961 & 92 & 0.629950 & 93 & 0.629992 \\
+94 & 0.629834 & 95 & 0.630427 & 96 & 0.628213 \\
+97 & 0.636452 & 98 & 0.605320 & 99 & 0.717023 \\
+100 & 0.000267 &  &  &  &  \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: LINEAR MINIMUM SURFACE}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 36
+\item Iterações: 123
+\item Valor mínimo: 1.000001e+00
+\item Tempo de execução: 0.354s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema LINEAR MINIMUM SURFACE} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 3.887367 & 2 & 3.888525 & 3 & 3.888155 \\
+4 & 3.888747 & 5 & 3.888756 & 6 & 3.888852 \\
+7 & 3.888529 & 8 & 3.887955 & 9 & 3.888694 \\
+10 & 3.888597 & 11 & 3.888872 & 12 & 3.888935 \\
+13 & 3.888175 & 14 & 3.888697 & 15 & 3.888612 \\
+16 & 3.888881 & 17 & 3.889140 & 18 & 3.889003 \\
+19 & 3.888773 & 20 & 3.888627 & 21 & 3.888898 \\
+22 & 3.889165 & 23 & 3.889085 & 24 & 3.889609 \\
+25 & 3.888813 & 26 & 3.888898 & 27 & 3.889170 \\
+28 & 3.889089 & 29 & 3.889841 & 30 & 3.889261 \\
+31 & 3.888904 & 32 & 3.888992 & 33 & 3.889028 \\
+34 & 3.889628 & 35 & 3.889265 & 36 & 3.890463 \\
+
+\end{longtable}
+
+
+\newpage            
+\subsection{Problema: ULTS0}
+
+\textbf{Informações:}
+\begin{itemize}
+\item Número de variáveis: 64
+\item Iterações: 1000
+\item Valor mínimo: 2.696351e-04
+\item Tempo de execução: 17.438s
+\end{itemize}
+
+\small
+\begin{longtable}{@{}cc|cc|cc@{}}
+\caption{Valores das variáveis do problema ULTS0} \\
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} & \textbf{Coordenada} & \textbf{Valor} \\
+\midrule
+\endhead
+
+\midrule \multicolumn{6}{r}{{Continua na próxima página}} \\ \midrule
+\endfoot
+
+\bottomrule
+\endlastfoot
+1 & 0.001035 & 2 & -0.003545 & 3 & -0.002856 \\
+4 & -0.005724 & 5 & -0.003607 & 6 & -0.008016 \\
+7 & -0.008922 & 8 & -0.017685 & 9 & -0.004321 \\
+10 & -0.007277 & 11 & -0.007542 & 12 & -0.009776 \\
+13 & -0.009535 & 14 & -0.013007 & 15 & -0.014827 \\
+16 & -0.021359 & 17 & -0.014976 & 18 & -0.014514 \\
+19 & -0.013796 & 20 & -0.013763 & 21 & -0.013243 \\
+22 & -0.014228 & 23 & -0.014745 & 24 & -0.017126 \\
+25 & -0.020260 & 26 & -0.018251 & 27 & -0.018040 \\
+28 & -0.017211 & 29 & -0.017950 & 30 & -0.017968 \\
+31 & -0.018757 & 32 & -0.019224 & 33 & -0.031444 \\
+34 & -0.025436 & 35 & -0.024051 & 36 & -0.020615 \\
+37 & -0.020866 & 38 & -0.018007 & 39 & -0.017293 \\
+40 & -0.012940 & 41 & -0.032604 & 42 & -0.026249 \\
+43 & -0.026355 & 44 & -0.022877 & 45 & -0.025435 \\
+46 & -0.022327 & 47 & -0.022782 & 48 & -0.017468 \\
+49 & -0.038325 & 50 & -0.029479 & 51 & -0.029935 \\
+52 & -0.025297 & 53 & -0.028861 & 54 & -0.024329 \\
+55 & -0.024781 & 56 & -0.016256 & 57 & -0.032246 \\
+58 & -0.024822 & 59 & -0.029258 & 60 & -0.025892 \\
+61 & -0.034495 & 62 & -0.030982 & 63 & -0.034966 \\
+64 & -0.026976 &  &  &  &  \\
+
+\end{longtable}
+
+
+
+
+
+\end{document}

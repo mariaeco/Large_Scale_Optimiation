@@ -205,7 +205,7 @@ def main():
     solver.print_summary()
     
     # Gerar tabela LaTeX
-    filename = f'liu_nocedal/latex_solution/resultados_lbfgsb.tex'
+    # filename = f'liu_nocedal/latex_solution/resultados_lbfgsb.tex'
     # generate_latex_table(solver.results, filename, 'L-BFGS-B')
     # salvar_pdf(filename, 'liu_nocedal/latex_solution/')
     

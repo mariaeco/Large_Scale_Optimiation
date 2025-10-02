@@ -96,12 +96,9 @@ def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregma
     for k in range(max_iter):
         # 1. Calcular gradiente da função objetivo
         grad_f = calcular_gradiente(f, x)
-        
+        # print(f"Gradiente: {np.linalg.norm(grad_f)}, iteração: {k}")
         # 2. Verificar convergência baseada no critério escolhido
-        if stop_criterion == "gradient_norm":
-            if np.linalg.norm(grad_f) <= tol:
-                break
-        
+
         # 3. Aplicar Mirror Descent com divergências de Bregman corretas
         if bregman == "euclidean":
             x_new = x - eta * grad_f
@@ -141,21 +138,28 @@ def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregma
         improvement = fo - fo_new
         
         if improvement > 1e-8:
-            # Boa melhoria: aceitar e aumentar passo
             x = x_new
             fo = fo_new
+            eta = min(eta * 1.1, 1.0)  # limite superior de eta
             last_improvement = k
-            eta = min(eta * 1.2, 2.0)
         else:
-            # Pouca melhoria: diminuir passo
-            eta = eta * 0.15
-            if k - last_improvement > 5:
-                eta = max(eta, 1e-8)
+            eta *= 0.5  # diminuo mais cauteloso
+            if eta < 1e-8:
+                eta = 1e-8
+
+        if stop_criterion == "gradient_norm":
+            if np.linalg.norm(grad_f) <= tol:
+                break
         
+
         # 5. Verificar convergência baseada no critério escolhido
         if stop_criterion == "point_change":
-            if np.linalg.norm(x_new - x) < tol:
+            # Verifica mudança no ponto ou mudança no valor da função
+            if np.linalg.norm(x_new - x) < tol or abs(fo - fo_new) < tol:
                 break
+        # if stop_criterion == "point_change":
+        #     if np.linalg.norm(x_new - x) < tol:
+        #         break
     
     return x, fo, k
 
@@ -272,21 +276,21 @@ class MirrorGradientOptimizedSolver:
         
         # Mapear problemas para tipos de restrição apropriados
         constraint_mapping = {
-            'ROSENBROCK': 'simplex',          # Problema de Rosenbrock na bola unitária
-            'EXTENDED_ROSENBROCK': 'ball',  # Problema de Rosenbrock estendido na bola unitária
-            'EXTENDED_POWELL': 'ball',      # Problema de Powell estendido na bola unitária
-            'FREUDENTHAL_ROTH': 'ball',     # Problema de Freudenthal-Roth na bola unitária
-            'ENGGVAL1': 'ball',             # Problema de Engvall na bola unitária
+            'ROSENBROCK': 'ball',          # Problema de Rosenbrock na bola unitária
+            'EXTENDED_ROSENBROCK': 'simplex',  # Problema de Rosenbrock estendido na bola unitária
+            'EXTENDED_POWELL': 'simplex',      # Problema de Powell estendido na bola unitária
+            'FREUDENTHAL_ROTH': 'simplex',     # Problema de Freudenthal-Roth na bola unitária
+            'ENGGVAL1': 'simplex',             # Problema de Engvall na bola unitária
             'TRIGONOMETRIC': 'simplex',  # Problema trigonométrico funciona bem no simplex
-            'PENALTY': 'ball',          # Problema de penalidade na bola unitária
-            'QOR': 'ball',              # Quadrático com restrições na bola
-            'GOR': 'ball',              # Quadrático com restrições na bola
-            'PSP': 'ball',              # Problema de penalidade na bola
-            'LINEAR_MINIMUM_SURFACE': 'ball',  # Superfície mínima na bola
-            'SQUARE_ROOT_1': 'ball',    # Raiz quadrada na bola
-            'SQUARE_ROOT_2': 'ball',    # Raiz quadrada na bola
-            'SPARSE_MATRIX_SQRT': 'ball',  # Matriz esparsa na bola
-            'ULTS0': 'box',             # ULTS0 já tem restrições de caixa
+            'PENALTY': 'simplex',          # Problema de penalidade na bola unitária
+            'QOR': 'simplex',              # Quadrático com restrições na bola
+            'GOR': 'simplex',              # Quadrático com restrições na bola
+            'PSP': 'simplex',              # Problema de penalidade na bola
+            'LINEAR_MINIMUM_SURFACE': 'simplex',  # Superfície mínima na bola
+            'SQUARE_ROOT_1': 'simplex',    # Raiz quadrada na bola
+            'SQUARE_ROOT_2': 'simplex',    # Raiz quadrada na bola
+            'SPARSE_MATRIX_SQRT': 'simplex',  # Matriz esparsa na bola
+            'ULTS0': 'simplex',             # ULTS0 já tem restrições de caixa
         }
         
         return constraint_mapping.get(problem_name, 'box')  # Padrão: bola unitária
@@ -372,8 +376,8 @@ def main():
     
     # Testar ambos os critérios de parada
     criterios = [
-        ("point_change", "Mudança no Ponto"),
-        ("gradient_norm", "Norma do Gradiente")
+        # ("point_change", "Mudança no Ponto"),
+        ("gradient_norm", "Norma do Gradiente;")
     ]
     
     for criterio, descricao in criterios:
@@ -381,23 +385,23 @@ def main():
         print(f"TESTANDO: {descricao}")
         print(f"{'='*60}")
         
-        # Criar solver com critério específico
+        
         solver = MirrorGradientOptimizedSolver(
-            eta=0.01, 
-            bregman='p_norm', 
+            eta=0.15, 
+            bregman='p_norm',  #'euclidean', 'entropy', 'p_norm'
             p=2, 
             stop_criterion=criterio
         )
         
         # Resolver todos os problemas
-        solver.solve_all_problems(max_iter=1000, tol=1e-6)
+        solver.solve_all_problems(max_iter=1000, tol=1e-3)
         
         # Imprimir resumo
         solver.print_summary()
         
         # Gerar tabela LaTeX específica
         method_name = f'Gradiente Espelhado ({descricao})'
-        detailed_filename = f'liu_nocedal/latex_solution/resultados_mirror_gradient_{criterio}.tex'
+        detailed_filename = f'liu_nocedal/latex_solution/resultados_mirror_gradient.tex'
         generate_detailed_latex_table(solver.results, detailed_filename, method_name)
         salvar_pdf(detailed_filename, 'liu_nocedal/latex_solution/')
         

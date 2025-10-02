@@ -1,0 +1,88 @@
+
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{multirow}
+
+\geometry{a4paper, margin=1.5cm}
+
+\title{Comparação dos Métodos de Otimização - L-BFGS-B, Descent Coordinate e Mirror Gradient}
+\author{Maria Marcolina Lima Cardoso}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Comparação dos Resultados}
+
+A tabela abaixo apresenta uma comparação dos resultados obtidos com os três métodos de otimização: L-BFGS-B, Descent Coordinate e Mirror Gradient.
+
+\begin{landscape}
+\begin{table}[h!]
+\centering
+\caption{Comparação dos métodos de otimização}
+\label{tab:comparacao}
+\footnotesize
+\begin{tabular}{@{}ll|ccc|ccc|ccc@{}}
+\toprule
+\multirow{2}{*}{\textbf{Problema}} & \multirow{2}{*}{\textbf{Vars}} & \multicolumn{3}{c|}{\textbf{L-BFGS-B}} & \multicolumn{3}{c|}{\textbf{Descent Coordinate}} & \multicolumn{3}{c}{\textbf{Mirror Gradient}} \\
+\cmidrule(lr){3-5} \cmidrule(lr){6-8} \cmidrule(lr){9-11}
+& & \textbf{Iter.} & \textbf{Valor Mín.} & \textbf{Tempo (s)} & \textbf{Iter.} & \textbf{Valor Mín.} & \textbf{Tempo (s)} & \textbf{Iter.} & \textbf{Valor Mín.} & \textbf{Tempo (s)} \\
+\midrule
+ENGGVAL1 & 100 & 14 & 109.0881 & 0.115 & 3 & 109.0881 & 0.167 & 34 & 109.0881 & 0.727 \\
+EXTENDED POWELL & 100 & 89 & 0.0001 & 0.539 & 80 & 0.0000 & 9.970 & 1000 & 0.0050 & 11.527 \\
+EXTENDED ROSENBROCK & 100 & 57 & 0.0000 & 0.261 & 3 & 0.0000 & 0.357 & 1000 & 0.8425 & 9.717 \\
+FREUDENTHAL ROTH & 100 & 19 & 11964.5800 & 0.464 & 3 & 11964.5800 & 0.560 & 1000 & 11975.5500 & 53.564 \\
+GOR & 50 & 52 & 1381.1230 & 0.293 & 3 & 1381.1180 & 0.497 & 1000 & 1381.1180 & 12.803 \\
+LINEAR MINIMUM SURFACE & 36 & 31 & 1.0000 & 0.062 & 3 & 1.0000 & 0.085 & 123 & 1.0000 & 0.354 \\
+PENALTY & 100 & 6 & 7.3811 & 0.033 & 3 & 7.3811 & 0.057 & 12 & 7.3811 & 0.176 \\
+PSP & 50 & 47 & 202.0496 & 0.261 & 3 & 202.0485 & 0.384 & 1000 & 202.0485 & 10.337 \\
+QOR & 50 & 19 & 1175.4730 & 0.085 & 3 & 1175.4720 & 0.127 & 138 & 1175.4720 & 1.249 \\
+ROSENBROCK & 100 & 16 & 0.0000 & 0.028 & 3 & 0.0000 & 0.056 & 1000 & 0.0469 & 0.589 \\
+SPARSE MATRIX SQRT & 34 & 30 & 0.0000 & 0.107 & 3 & 0.0000 & 0.154 & 211 & 0.0000 & 1.209 \\
+SQUARE ROOT 1 & 36 & 70 & 0.0000 & 0.088 & 3 & 0.0000 & 0.316 & 1000 & 0.0003 & 1.275 \\
+SQUARE ROOT 2 & 36 & 108 & 0.0000 & 0.168 & 3 & 0.0000 & 0.336 & 1000 & 0.0010 & 1.273 \\
+TRIDIAGONAL & 100 & 18 & 0.0000 & 0.099 & 3 & 0.0000 & 0.167 & 47 & 0.0000 & 0.622 \\
+TRIGONOMETRIC & 100 & 4 & 0.0000 & 0.002 & 3 & 0.0000 & 0.000 & 3 & 0.0000 & 0.001 \\
+ULTS0 & 64 & 156 & 0.0001 & 1.387 & 148 & 83.0229 & 53.036 & 1000 & 0.0003 & 17.438 \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+\end{landscape}
+
+\section{Análise dos Resultados}
+
+\subsection{Observações Gerais}
+
+\begin{itemize}
+\item \textbf{L-BFGS-B}: Apresenta boa convergência para a maioria dos problemas, com número moderado de iterações e tempos de execução razoáveis.
+\item \textbf{Descent Coordinate}: Demonstra convergência muito rápida (3 iterações para a maioria dos problemas), mas com tempos de execução variáveis.
+\item \textbf{Mirror Gradient}: Utiliza 1000 iterações para a maioria dos problemas, indicando possível necessidade de ajuste de parâmetros ou critério de parada.
+\end{itemize}
+
+\subsection{Problemas de Destaque}
+
+\begin{itemize}
+\item \textbf{EXTENDED POWELL}: Todos os métodos convergem rapidamente para o valor ótimo (0.000000e+00).
+\item \textbf{ULTS0}: O Mirror Gradient apresenta melhor valor mínimo final comparado aos outros métodos.
+\item \textbf{FREUDENTHAL ROTH}: L-BFGS-B e Descent Coordinate apresentam resultados similares, enquanto Mirror Gradient diverge significativamente.
+\end{itemize}
+
+\subsection{Performance por Método}
+
+\begin{itemize}
+\item \textbf{Eficiência em Iterações}: Descent Coordinate > L-BFGS-B > Mirror Gradient
+\item \textbf{Tempo de Execução}: L-BFGS-B apresenta os menores tempos na maioria dos casos
+\item \textbf{Precisão}: L-BFGS-B e Descent Coordinate apresentam valores mínimos mais precisos para a maioria dos problemas
+\end{itemize}
+
+\end{document}
