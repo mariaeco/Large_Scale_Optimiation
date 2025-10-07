@@ -30,22 +30,22 @@
 \item Inviabilidade Dual: 0.000e+00
 \item Valor Primal: -2.100e+01
 \item Valor Dual: -2.100e+01
-\item Gap: -0.000e+00
+\item Gap: 0.000e+00
 \item Número de Iterações: 4
 \end{itemize}
 
 
-\section{Variáveis Primais e Custos Reduzidos}
+\section{Variáveis Primais e Custos Reduzidos (x > 0 e z > 0)}
 
 \begin{longtable}{@{}cccc@{}}
-\caption{Variáveis primais e custos reduzidos do problema TAHA13MPS} \\
+\caption{Variáveis primais (x) e custos reduzidos (z) com valores > 0 do problema TAHA13MPS} \\
 \toprule
-\textbf{Coordenada x} & \textbf{Valor x} & \textbf{Coordenada z} & \textbf{Valor z} \\
+\textbf{Coordenada x} & \textbf{Valor x (Primal)} & \textbf{Coordenada z} & \textbf{Valor z (Custo Reduzido)} \\
 \midrule
 \endfirsthead
 
 \toprule
-\textbf{Coordenada x} & \textbf{Valor x} & \textbf{Coordenada z} & \textbf{Valor z} \\
+\textbf{Coordenada x} & \textbf{Valor x (Primal)} & \textbf{Coordenada z} & \textbf{Valor z (Custo Reduzido)} \\
 \midrule
 \endhead
 
@@ -54,22 +54,24 @@
 
 \bottomrule
 \endlastfoot
-1 & 3.000000 & 1 & 0.000000 \\
-2 & 1.500000 & 2 & 0.000000 \\
+1 & 3.000e+00 &  &  \\
+2 & 1.500e+00 &  &  \\
 
+\bottomrule
 \end{longtable}
 
-\section{Variáveis Duais (Multiplicadores de Lagrange)}
+
+\section{Variáveis Duais (Multiplicadores de Lagrange - Valores > 0)}
 
 \begin{longtable}{@{}cc@{}}
-\caption{Variáveis duais do problema TAHA13MPS} \\
+\caption{Variáveis duais (y) com valores > 0 do problema TAHA13MPS} \\
 \toprule
-\textbf{Coordenada y} & \textbf{Valor y} \\
+\textbf{Coordenada y} & \textbf{Valor y (Dual)} \\
 \midrule
 \endfirsthead
 
 \toprule
-\textbf{Coordenada y} & \textbf{Valor y} \\
+\textbf{Coordenada y} & \textbf{Valor y (Dual)} \\
 \midrule
 \endhead
 
@@ -78,21 +80,9 @@
 
 \bottomrule
 \endlastfoot
-1 & -0.750000 \\
-2 & -0.500000 \\
-3 & -0.000000 \\
-4 & -0.000000 \\
 
+\bottomrule
 \end{longtable}
 
-
-\section{Observações}
-
-\begin{itemize}
-\item O solver HiGHS foi configurado com o método IPM (Interior Point Method).
-\item Este arquivo contém a solução detalhada para o problema TAHA13MPS.
-\item As variáveis duais representam os multiplicadores de Lagrange das restrições.
-\item Os custos reduzidos (z) indicam o impacto de forçar variáveis não-básicas na base.
-\end{itemize}
 
 \end{document}

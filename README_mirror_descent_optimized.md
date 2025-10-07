@@ -28,26 +28,11 @@ Após análise dos códigos existentes (`MirrorDescentSolver_example1.py`, `Mirr
 
 ### 1. **Critério de Parada Robusto**
 ```python
-def _check_convergence(self, x_old, x_new, gradient, iteration):
-    # 1. Critério de gradiente (mais importante)
+
     grad_norm = np.linalg.norm(gradient)
-    if grad_norm < self.tolerance:
-        return True
-    
-    # 2. Critério de mudança relativa (apenas após algumas iterações)
-    if iteration > 10:
-        point_change = np.linalg.norm(x_new - x_old)
-        relative_change = point_change / (np.linalg.norm(x_new) + 1e-15)
-        if relative_change < self.tolerance * 0.1:
-            return True
-    
-    # 3. Critério de mudança na função objetivo
-    if len(self.convergence_history) > 5:
-        obj_change = abs(self.convergence_history[-1] - self._objective_function(x_new))
-        if obj_change < self.tolerance * 1e-3:
-            return True
-    
-    return False
+    if abs(f-f0) < eta*||grad||²:
+        break
+
 ```
 
 ### 2. **Learning Rate Adaptativo**

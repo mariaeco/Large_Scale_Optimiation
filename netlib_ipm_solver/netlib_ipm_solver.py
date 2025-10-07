@@ -5,8 +5,8 @@ import pandas as pd
 from time import perf_counter as pc
 from highspy import Highs
 import glob
-from construct_latex import create_latex_document, create_individual_problem_document
-from latex_to_pdf import salvar_pdf #to print general pfd
+from construct_latex import create_latex_document, create_individual_problem_document, generate_individual_problem_files, generate_general_report
+from latex_to_pdf import save_pdf #to print general pfd
 
 
 
@@ -316,7 +316,7 @@ class NetlibSolver:
         df.to_csv(filename, index=False, encoding='utf-8')
         print(f"Resultados salvos em: {filename}")
     
-    def generate_latex_table(self, filename='netlib_ipm_solver/latex_solution/resultados_netlib.tex'):
+    def generate_latex_table(self, filename='netlib_ipm_solver/latex_solution/relatorio_geral_netlib.tex'):
         """
         Gera tabela LaTeX com os resultados.
         
@@ -330,15 +330,10 @@ class NetlibSolver:
         df = self.generate_results_table()
         print(df)
         
-        # Criar documento LaTeX
-        latex_content = create_latex_document(df)
-        
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write(latex_content)
-        
-        print(f"Tabela LaTeX salva em: {filename}")
+        # Usar função do construct_latex
+        generate_general_report(df, filename)
     
-    def generate_individual_problem_files(self, output_dir):
+    def generate_individual_problem_files(self, output_dir='netlib_ipm_solver/latex_solution/relatorio_individual_problems_tex'):
         """
         Gera um arquivo LaTeX individual para cada problema.
         
@@ -349,22 +344,10 @@ class NetlibSolver:
             print("Nenhum resultado disponível.")
             return
         
-        # Criar diretório se não existir
-        os.makedirs(output_dir, exist_ok=True)
-        
         df = self.generate_results_table()
         
-        for _, row in df.iterrows():
-            problem_name = row['PROBLEMA']
-            filename = os.path.join(output_dir, f"{problem_name}.tex")
-            
-            # Criar conteúdo LaTeX para o problema individual
-            latex_content = create_individual_problem_document(row)
-            
-            with open(filename, 'w', encoding='utf-8') as f:
-                f.write(latex_content)
-            
-            print(f"Arquivo individual salvo: {filename}")
+        # Usar função do construct_latex
+        generate_individual_problem_files(df, output_dir)
 
 
 
@@ -384,7 +367,7 @@ def main():
     # Salvar resultados
     solver.save_results_to_csv('netlib_ipm_solver/latex_solution/relatorio_geral_netlib.csv')
     solver.generate_latex_table('netlib_ipm_solver/latex_solution/relatorio_geral_netlib.tex')
-    salvar_pdf('netlib_ipm_solver/latex_solution/relatorio_geral_netlib.tex', 'netlib_ipm_solver/latex_solution/')
+    save_pdf('netlib_ipm_solver/latex_solution/relatorio_geral_netlib.tex', 'netlib_ipm_solver/latex_solution/')
     
     # Gerar arquivos individuais para cada problema
     print("\nGerando arquivos individuais para cada problema...")

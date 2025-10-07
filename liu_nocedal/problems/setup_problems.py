@@ -33,16 +33,16 @@ def setup_problems():
         """
 
         #N var e start values -----------
-        #Freudenthal Roth
-        N3 = 100
+        #Freudenthal Roth, Extended Rosenbrock 
+        N3 = 1000
         x03 = np.random.rand(N3)
         
-        #Rosenbrock, Extended Rosenbrock Freudenthal Roth
-        N = 100
+        #Rosenbrock
+        N = 1000
         x0 = np.random.rand(N)
 
         #Penalty. Trigonometric, Extended Powell
-        N2 = 100
+        N2 = 1000
         x02 = np.random.rand(N2)  
 
         #QOR, GOR, PSP
@@ -68,7 +68,7 @@ def setup_problems():
             },
             'EXTENDED_ROSENBROCK': {  # Não-quadrático, não-convexo, extensão do Rosenbrock
                 'objective': rosenbrock_ext_objective,
-                'setup': lambda: (N, np.random.rand(N)),  # n deve ser par
+                'setup': lambda: (N3, np.random.rand(N3)),  # n deve ser par
                 'bounds': None,
                 'args': None
             },
@@ -135,7 +135,7 @@ def setup_problems():
             },
             'TRIDIAGONAL': {  # Quadrático, convexo, estrutura tridiagonal
                 'objective': tridia_objective,
-                'setup': lambda: (N, np.random.rand(N)),
+                'setup': lambda: (N3, np.random.rand(N3)),
                 'bounds': None,
                 'args': None
             },

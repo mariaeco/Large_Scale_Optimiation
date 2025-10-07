@@ -10,7 +10,7 @@ from datetime import datetime
 
 # Importar os solvers
 from lbfgsb_solver import LBFGSBSolver
-from mirror_gradient_algorith import MirrorGradientSolver
+from mirror_gradient_optimized import MirrorGradientOptimizedSolver
 from descent_coordinate_algorithm import CoordinateDescentSolver
 from latex_to_pdf import salvar_pdf
 
@@ -22,7 +22,7 @@ class ComparisonSolver:
     
     def __init__(self):
         self.lbfgs_solver = LBFGSBSolver()
-        self.mirror_solver = MirrorGradientSolver()
+        self.mirror_solver = MirrorGradientOptimizedSolver()
         self.coordinate_solver = CoordinateDescentSolver()
         self.comparison_results = []
     
