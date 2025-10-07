@@ -2,6 +2,11 @@
 
 Este repositório implementa e compara diferentes métodos de otimização para problemas de larga escala, incluindo problemas da coleção NETLIB e problemas de Liu e Nocedal. O projeto foca em métodos eficientes para otimização não-linear e programação linear.
 
+## Como instalar 
+1) clone o repositório ou faça o download dele completo
+2) abra a pasta no vscode ou outra IDE de preferência
+3) no terminal, vá para o caminho da pasta, e digite para instalar todos os pacotes:
+     pip freeze > requirements.txt
 
 
 ## 📋 **Dependências**
@@ -87,5 +92,6 @@ Este repositório implementa e compara diferentes métodos de otimização para 
 - **`resultados_netlib.tex`**: Arquivo principal com tabelas gerais
 - **`individual_problems/`**: Arquivos LaTeX individuais para cada problema
 - **`individual_problems_pdf/`**: PDFs gerados dos arquivos individuais
+
 
 
