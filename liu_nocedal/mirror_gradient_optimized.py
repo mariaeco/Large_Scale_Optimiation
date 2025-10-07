@@ -137,6 +137,10 @@ def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregma
         fo_new = f(x_new)
         improvement = fo - fo_new
         
+        if abs(fo_new - fo) < eta*k*np.linalg.norm(grad_f,ord=np.inf):
+            break
+
+
         if improvement > 1e-8:
             x = x_new
             fo = fo_new
@@ -147,20 +151,6 @@ def gradiente_espelhado(f, x0, eta_inicial=0.01, max_iter=1000, tol=1e-6, bregma
             if eta < 1e-8:
                 eta = 1e-8
 
-        if stop_criterion == "gradient_norm":
-            if np.linalg.norm(grad_f) <= tol:
-                break
-        
-
-        # 5. Verificar convergência baseada no critério escolhido
-        if stop_criterion == "point_change":
-            # Verifica mudança no ponto ou mudança no valor da função
-            if np.linalg.norm(x_new - x) < tol or abs(fo - fo_new) < tol:
-                break
-        # if stop_criterion == "point_change":
-        #     if np.linalg.norm(x_new - x) < tol:
-        #         break
-    
     return x, fo, k
 
 
@@ -376,7 +366,6 @@ def main():
     
     # Testar ambos os critérios de parada
     criterios = [
-        # ("point_change", "Mudança no Ponto"),
         ("gradient_norm", "Norma do Gradiente;")
     ]
     
@@ -387,14 +376,14 @@ def main():
         
         
         solver = MirrorGradientOptimizedSolver(
-            eta=0.15, 
+            eta=0.01, 
             bregman='p_norm',  #'euclidean', 'entropy', 'p_norm'
             p=2, 
             stop_criterion=criterio
         )
         
         # Resolver todos os problemas
-        solver.solve_all_problems(max_iter=1000, tol=1e-3)
+        solver.solve_all_problems(max_iter=1000, tol=1e-6)
         
         # Imprimir resumo
         solver.print_summary()
